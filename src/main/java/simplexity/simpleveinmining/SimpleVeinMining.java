@@ -8,7 +8,9 @@ public final class SimpleVeinMining extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-
+        this.saveDefaultConfig();
+        ConfigHandler.getInstance().loadConfigValues();
+        this.getServer().getPluginManager().registerEvents(new MiningListener(), this);
     }
     public static SimpleVeinMining getInstance() {
         return instance;

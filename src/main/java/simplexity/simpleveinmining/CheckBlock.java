@@ -9,17 +9,18 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public class CheckBlock {
-    
-    public Set<Location> getBlockListAsync(Set<Material> targets, Location start, int max) {
-        SimpleVeinMining.getInstance().getServer().getAsyncScheduler().runNow(SimpleVeinMining.getInstance(), () -> getBlockList(targets, start, max))
+    private CheckBlock(){}
+    private static CheckBlock instance;
+    public static CheckBlock getInstance(){
+        if(instance == null) instance = new CheckBlock();
+        return instance;
     }
+    
     public Set<Location> getBlockList(Set<Material> targets, Location start, int max) {
         Set<Location> valid_blocks = new HashSet<>();
         checkBlockRecursive(targets, valid_blocks, start, max);
         return valid_blocks;
     }
-    
-    
     
     public void checkBlockRecursive(Set<Material> targets, Set<Location> valid, Location current, int max) {
         valid.add(current);
