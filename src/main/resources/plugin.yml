@@ -1,0 +1,4 @@
+name: SimpleVeinMining
+version: '${project.version}'
+main: simplexity.simpleveinmining.SimpleVeinMining
+api-version: '1.20'

@@ -1,0 +1,23 @@
+# Which blocks should be affected by vein mining?
+allowed-blocks:
+  - "minecraft:coal_ore"
+  - "minecraft:deepslate_coal_ore"
+  - "minecraft:copper_ore"
+  - "minecraft:deepslate_copper_ore"
+  - "minecraft:diamond_ore"
+  - "minecraft:deepslate_diamond_ore"
+  - "minecraft:emerald_ore"
+  - "minecraft:deepslate_emerald_ore"
+  - "minecraft:gold_ore"
+  - "minecraft:deepslate_gold_ore"
+  - "minecraft:iron_ore"
+  - "minecraft:deepslate_iron_ore"
+  - "minecraft:lapis_ore"
+  - "minecraft:deepslate_lapis_ore"
+  - "minecraft:redstone_ore"
+  - "minecraft:deepslate_redstone_ore"
+# Should the block list be a blacklist instead of a whitelist?
+allowed-blocks-is-blacklist: false
+# Should only blocks of the same type be vein-mined together? For instance
+# If a player mines iron and there's coal, should only the iron be mined?
+same-type: true
