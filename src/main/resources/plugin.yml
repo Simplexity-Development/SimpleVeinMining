@@ -6,3 +6,10 @@ permissions:
   veinmining.mining:
     default: op
     description: vein mining
+  veinmining.reload:
+    default: op
+    description: reload plugin
+commands:
+  svmreload:
+    permission: veinmining.reload
+    description: plugin reload

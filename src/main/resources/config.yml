@@ -63,12 +63,18 @@ types:
     - "minecraft:nether_quartz_ore"
   ancient_debris:
     - "minecraft:ancient_debris"
+# Should vein-mining work in creative mode
+works-in-creative: false
+# Should sound effects and particles play?
+run-effects: true
 # Should blocks that would normally drop xp still drop xp when vein-mined?
 drop-xp: true
 # Should mined blocks wear down the tool used?
 damage-tool:
   enabled: true
   prevent-breaking: true
+  respect-unbreaking-enchant: true
 # Should players be required to use the correct tool for the blocks to be vein-mined?
 require-proper-tool: true
+#max blocks to check. 216 blocks would be a 6x6x6 cube and covers vanilla ore veins.
 max-blocks-to-scan: 216

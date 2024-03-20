@@ -20,8 +20,9 @@ public class ConfigHandler {
     }
     private final Set<Material> blockList = new HashSet<>();
     private final HashMap<String, Set<Material>> groupList = new HashMap<>();
+    private int maxBlocksToScan;
     private final Logger logger = SimpleVeinMining.getInstance().getLogger();
-    private boolean isBlacklist, onlySameType;
+    private boolean isBlacklist, onlySameType, worksInCreative, runEffects, dropXP, damageTool, preventBreakingTool, respectUnbreakingEnchant, requireProperTool;
     
     public void loadConfigValues(){
         SimpleVeinMining.getInstance().reloadConfig();
@@ -40,6 +41,14 @@ public class ConfigHandler {
                 groupList.putAll(configuredGroups);
             }
         }
+        worksInCreative = config.getBoolean("works-in-creative", false);
+        runEffects = config.getBoolean("run-effects", false);
+        dropXP = config.getBoolean("drop-xp", true);
+        damageTool = config.getBoolean("damage-tool.enabled", true);
+        preventBreakingTool = config.getBoolean("damage-tool.prevent-breaking", true);
+        respectUnbreakingEnchant = config.getBoolean("damage-tool.respect-unbreaking-enchant", true);
+        requireProperTool = config.getBoolean("require-proper-tool", true);
+        maxBlocksToScan = config.getInt("max-blocks-to-scan", 216);
         
     }
     private ArrayList<Material> loadConfiguredMaterials(FileConfiguration config){
@@ -96,5 +105,37 @@ public class ConfigHandler {
     
     public HashMap<String, Set<Material>> getGroupList(){
         return groupList;
+    }
+    
+    public boolean isDropXP() {
+        return dropXP;
+    }
+    
+    public boolean isDamageTool() {
+        return damageTool;
+    }
+    
+    public boolean isPreventBreakingTool() {
+        return preventBreakingTool;
+    }
+    
+    public boolean isRequireProperTool() {
+        return requireProperTool;
+    }
+    
+    public int getMaxBlocksToScan() {
+        return maxBlocksToScan;
+    }
+    
+    public boolean isRunEffects() {
+        return runEffects;
+    }
+    
+    public boolean isWorksInCreative() {
+        return worksInCreative;
+    }
+    
+    public boolean isRespectUnbreakingEnchant() {
+        return respectUnbreakingEnchant;
     }
 }

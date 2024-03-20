@@ -11,6 +11,7 @@ public final class SimpleVeinMining extends JavaPlugin {
         this.saveDefaultConfig();
         ConfigHandler.getInstance().loadConfigValues();
         this.getServer().getPluginManager().registerEvents(new MiningListener(), this);
+        this.getCommand("svmreload").setExecutor(new ReloadCommand());
     }
     public static SimpleVeinMining getInstance() {
         return instance;
