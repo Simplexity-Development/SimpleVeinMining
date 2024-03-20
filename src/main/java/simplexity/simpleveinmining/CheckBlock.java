@@ -21,7 +21,13 @@ public class CheckBlock {
     public Set<Location> getBlockList(Set<Material> targets, Location start, int max) {
         Set<Location> valid_blocks = new HashSet<>();
         Queue<Location> next_blocks = new LinkedList<>();
-        checkBlockRecursive(targets, valid_blocks, next_blocks, start, max);
+        try {
+            checkBlockRecursive(targets, valid_blocks, next_blocks, start, max);
+        }
+        catch (StackOverflowError e) {
+            SimpleVeinMining.getInstance().getLogger().severe("SimpleVeinMining has tried to break so many blocks that it caused a StackOverflowError.");
+            SimpleVeinMining.getInstance().getLogger().warning("SimpleVeinMining still managed to break as many blocks as possible, but you may want to lower the allowed block amount.");
+        }
         return valid_blocks;
     }
     
