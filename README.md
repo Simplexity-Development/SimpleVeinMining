@@ -81,7 +81,7 @@ damage-tool:
 # A shovel is not a proper tool for stone because it will not drop the item.
 require-proper-tool: true
 #max blocks to break in one pass. For reference, the largest ore blobs are 52 blocks in size
-max-blocks-to-scan: 64
+max-blocks-to-break: 64
 
 ```
 ## Permissions and commands

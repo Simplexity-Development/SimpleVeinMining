@@ -25,8 +25,7 @@ public class ConfigHandler {
     
     private final Set<Material> blockList = new HashSet<>();
     private final HashMap<String, Set<Material>> groupList = new HashMap<>();
-    private final Set<Material> additionalTools = new HashSet<>();
-    private int maxBlocksToScan;
+    private int maxBlocksToBreak;
     private final Logger logger = SimpleVeinMining.getInstance().getLogger();
     private boolean isBlacklist, onlySameType, worksInCreative, runEffects, dropXP, damageTool, preventBreakingTool, respectUnbreakingEnchant, requireProperTool;
     
@@ -55,7 +54,7 @@ public class ConfigHandler {
         preventBreakingTool = config.getBoolean("damage-tool.prevent-breaking", true);
         respectUnbreakingEnchant = config.getBoolean("damage-tool.respect-unbreaking-enchant", true);
         requireProperTool = config.getBoolean("require-proper-tool", true);
-        maxBlocksToScan = config.getInt("max-blocks-to-scan", 216);
+        maxBlocksToBreak = config.getInt("max-blocks-to-break", 64);
         
     }
     
@@ -133,8 +132,8 @@ public class ConfigHandler {
         return requireProperTool;
     }
     
-    public int getMaxBlocksToScan() {
-        return maxBlocksToScan;
+    public int getMaxBlocksToBreak() {
+        return maxBlocksToBreak;
     }
     
     public boolean isRunEffects() {

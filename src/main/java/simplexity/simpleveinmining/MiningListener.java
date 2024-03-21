@@ -88,7 +88,7 @@ public class MiningListener implements Listener {
     
     private int checkItemDurability(ItemStack heldItem) {
         int maxSearch;
-        int maxConfiguredSearch = ConfigHandler.getInstance().getMaxBlocksToScan();
+        int maxConfiguredSearch = ConfigHandler.getInstance().getMaxBlocksToBreak();
         if (!(ConfigHandler.getInstance().isDamageTool() &&
                 ConfigHandler.getInstance().isPreventBreakingTool() &&
                 (heldItem.getItemMeta() instanceof Damageable damageableItem) &&
