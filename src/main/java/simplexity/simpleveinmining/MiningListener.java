@@ -1,5 +1,6 @@
 package simplexity.simpleveinmining;
 
+import com.destroystokyo.paper.MaterialSetTag;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,6 +27,7 @@ public class MiningListener implements Listener {
         Player player = blockBreakEvent.getPlayer();
         ItemStack heldItem = player.getInventory().getItemInMainHand();
         Set<Material> blockSet = ConfigHandler.getInstance().getBlockList();
+        player.sendMessage("RUNNING");
         if (ConfigHandler.getInstance().isBlacklist() && blockSet.contains(blockMaterial)) return;
         if (!ConfigHandler.getInstance().isBlacklist() && !blockSet.contains(blockMaterial)) return;
         if (!player.hasPermission("veinmining.mining")) return;
@@ -33,8 +35,9 @@ public class MiningListener implements Listener {
         if (player.getGameMode().equals(GameMode.CREATIVE) && !ConfigHandler.getInstance().isWorksInCreative()) return;
         if (player.isSneaking()) return;
         int maxSearch = checkItemDurability(heldItem);
-        if (maxSearch < 2) {
+        if (maxSearch < 5) {
             player.sendMessage("PLACEHOLDER ERROR - NOT ENOUGH DURABILITY FOR VEIN MINING");
+            return;
         }
         Set<Material> blocksToCheck = new HashSet<>();
         if (!ConfigHandler.getInstance().isOnlySameType()) {
@@ -57,7 +60,9 @@ public class MiningListener implements Listener {
             }
         }
         if (key == null) {
-            return new HashSet<>();
+            Set<Material> singleMaterial = new HashSet<>();
+            singleMaterial.add(materialOfBrokenBlock);
+            return singleMaterial;
         }
         return groupList.get(key);
     }
@@ -73,7 +78,7 @@ public class MiningListener implements Listener {
             }
         }
         if (ConfigHandler.getInstance().isRespectUnbreakingEnchant()) {
-            damageAmount = damageAmount / unbreakingEnchantLevel;
+            damageAmount = calculateDamageWithUnbreaking(damageAmount, unbreakingEnchantLevel);
         }
         player.getInventory().getItemInMainHand().damage(damageAmount, player);
     }
@@ -81,17 +86,25 @@ public class MiningListener implements Listener {
     private int checkItemDurability(ItemStack heldItem) {
         int maxSearch;
         int maxConfiguredSearch = ConfigHandler.getInstance().getMaxBlocksToScan();
-        if (ConfigHandler.getInstance().isDamageTool() && ConfigHandler.getInstance().isPreventBreakingTool() && (heldItem instanceof Damageable damageableItem)) {
-            int maxDurability = heldItem.getType().getMaxDurability();
-            int currentDamage = damageableItem.getDamage();
-            int currentDurability = maxDurability - currentDamage;
-            maxSearch = currentDurability - 5;
-            if (maxSearch > maxConfiguredSearch) {
-                return maxConfiguredSearch;
-            }
-            return maxSearch;
+        if (!(ConfigHandler.getInstance().isDamageTool() &&
+                ConfigHandler.getInstance().isPreventBreakingTool() &&
+                (heldItem.getItemMeta() instanceof Damageable damageableItem) &&
+                MaterialSetTag.ITEMS_TOOLS.isTagged(heldItem.getType()))) {
+            return maxConfiguredSearch;
         }
-        return maxConfiguredSearch;
+        System.out.println("THIS RAN");
+        int maxDurability = heldItem.getType().getMaxDurability();
+        int currentDamage = damageableItem.getDamage();
+        maxSearch = maxDurability - currentDamage - 5;
+        return Math.min(maxSearch, maxConfiguredSearch);
+    }
+    
+    private int calculateDamageWithUnbreaking(int damageAmount, int unbreakingAmount) {
+        double unbreakingDamageReduction = 0.2;
+        for (int i = 0; i < unbreakingAmount; i++) {
+            damageAmount = (int) (damageAmount * (1 - unbreakingDamageReduction));
+        }
+        return damageAmount;
     }
     
 }

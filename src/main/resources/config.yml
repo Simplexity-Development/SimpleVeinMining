@@ -27,6 +27,7 @@ allowed-blocks:
 allowed-blocks-is-blacklist: false
 # Should only blocks of the same type be vein-mined together? For instance
 ## If a player mines iron and there's coal, should only the iron be mined?
+#
 same-type: true
 types:
   coal:
@@ -74,7 +75,9 @@ damage-tool:
   enabled: true
   prevent-breaking: true
   respect-unbreaking-enchant: true
-# Should players be required to use the correct tool for the blocks to be vein-mined?
+# Should players be required to use the proper tool for the block?
+# NOTE: proper tool does not necessarily mean effective tool, for instance, a pickaxe is a proper tool for dirt since it will still drop the item.
+# A shovel is not a proper tool for stone because it will not drop the item.
 require-proper-tool: true
-#max blocks to check. 216 blocks would be a 6x6x6 cube and covers vanilla ore veins.
-max-blocks-to-scan: 216
+#max blocks to break in one pass. For reference, the largest ore blobs are 52 blocks in size
+max-blocks-to-scan: 64

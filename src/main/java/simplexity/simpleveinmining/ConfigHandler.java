@@ -35,7 +35,8 @@ public class ConfigHandler {
         if (onlySameType) {
             HashMap<String, Set<Material>> configuredGroups = loadConfiguredGroups(config);
             if (configuredGroups.isEmpty()) {
-                onlySameType = false;
+                logger.warning("You have set 'same-type' to 'true' in your configuration, but have not designated any type groups.");
+                logger.warning("Groups will consist only of the singular block-type mined, which may be unwanted.");
             } else {
                 groupList.clear();
                 groupList.putAll(configuredGroups);
