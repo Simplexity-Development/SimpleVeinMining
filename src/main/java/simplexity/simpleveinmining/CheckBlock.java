@@ -1,6 +1,5 @@
 package simplexity.simpleveinmining;
 
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -8,13 +7,16 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public class CheckBlock {
-    private CheckBlock(){}
+    
+    private CheckBlock() {
+    }
+    
     private static CheckBlock instance;
-    public static CheckBlock getInstance(){
-        if(instance == null) instance = new CheckBlock();
+    
+    public static CheckBlock getInstance() {
+        if (instance == null) instance = new CheckBlock();
         return instance;
     }
     
@@ -23,8 +25,7 @@ public class CheckBlock {
         Queue<Location> next_blocks = new LinkedList<>();
         try {
             checkBlockRecursive(targets, valid_blocks, next_blocks, start, max);
-        }
-        catch (StackOverflowError e) {
+        } catch (StackOverflowError e) {
             SimpleVeinMining.getInstance().getLogger().severe("SimpleVeinMining has tried to break so many blocks that it caused a StackOverflowError.");
             SimpleVeinMining.getInstance().getLogger().warning("SimpleVeinMining still managed to break as many blocks as possible, but you may want to lower the allowed block amount.");
         }

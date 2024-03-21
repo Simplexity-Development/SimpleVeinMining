@@ -2,14 +2,22 @@ name: SimpleVeinMining
 version: '${project.version}'
 main: simplexity.simpleveinmining.SimpleVeinMining
 api-version: '1.20'
+description: A simple plugin with configuration options for vein mining.
+website: https://github.com/Simplexity-Development/SimpleVeinMining
 permissions:
   veinmining.mining:
     default: op
-    description: vein mining
+    description: Allows the player to use the vein mining functionality
   veinmining.reload:
     default: op
-    description: reload plugin
+    description: Allows the player to reload the plugin
+  veinmining.toggle:
+    default: op
+    description: Allows player to toggle vein mining off/on for themselves
 commands:
-  svmreload:
+  vmreload:
     permission: veinmining.reload
-    description: plugin reload
+    description: Allows the player to reload the plugin
+  vmtoggle:
+    permission: veinmining.toggle
+    description: Allows player to toggle vein mining off/on for themselves

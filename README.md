@@ -1,3 +1,10 @@
+# Simple Vein Mining
+
+A simple vein-miner plugin for paper and forks of paper servers. 
+There's a lot of configuration options for better customization.
+
+## Default Config
+```yml
 # Which blocks should be affected by vein mining?
 allowed-blocks:
   - "minecraft:coal_ore"
@@ -75,3 +82,12 @@ damage-tool:
 require-proper-tool: true
 #max blocks to break in one pass. For reference, the largest ore blobs are 52 blocks in size
 max-blocks-to-scan: 64
+
+```
+## Permissions and commands
+
+| Permission          | Command     | Default | Description                                               |
+|---------------------|-------------|---------|-----------------------------------------------------------|
+| `veinmining.mining` | N/A         | op      | Allows the player to use the vein mining functionality    |
+| `veinmining.reload` | `/vmreload` | op      | Allows the player to reload the plugin                    |
+| `veinmining.toggle` | `/vmtoggle` | op      | Allows player to toggle vein mining off/on for themselves |

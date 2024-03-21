@@ -1,0 +1,8 @@
+errors:
+  not-enough-durability: "<dark_red>[<gold>!!</gold>]</dark_red> <yellow>Your tool is nearly broken, vein mining has been prevented.</yellow>"
+  only-player: "<red>Only a player can run this command</red>"
+messages:
+  toggle:
+    enabled: "<green>Vein mining has been enabled</green>"
+    disabled: "<gray>Vein mining is now disabled</gray>"
+  config-reloaded: "<gold>Simple Vein Mining Config has been reloaded</gold>"

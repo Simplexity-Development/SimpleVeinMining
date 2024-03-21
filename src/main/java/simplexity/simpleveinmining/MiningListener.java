@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,12 +32,14 @@ public class MiningListener implements Listener {
         if (ConfigHandler.getInstance().isBlacklist() && blockSet.contains(blockMaterial)) return;
         if (!ConfigHandler.getInstance().isBlacklist() && !blockSet.contains(blockMaterial)) return;
         if (!player.hasPermission("veinmining.mining")) return;
+        boolean toggleEnabled = player.getPersistentDataContainer().getOrDefault(VeinMiningToggle.toggleKey, PersistentDataType.BOOLEAN, true);
+        if (!toggleEnabled) return;
         if (!blockBroken.isPreferredTool(heldItem) && ConfigHandler.getInstance().isRequireProperTool()) return;
         if (player.getGameMode().equals(GameMode.CREATIVE) && !ConfigHandler.getInstance().isWorksInCreative()) return;
         if (player.isSneaking()) return;
         int maxSearch = checkItemDurability(heldItem);
         if (maxSearch < 5) {
-            player.sendMessage("PLACEHOLDER ERROR - NOT ENOUGH DURABILITY FOR VEIN MINING");
+            player.sendRichMessage(LocaleHandler.getInstance().getAlmostBroken());
             return;
         }
         Set<Material> blocksToCheck = new HashSet<>();
@@ -92,7 +95,6 @@ public class MiningListener implements Listener {
                 MaterialSetTag.ITEMS_TOOLS.isTagged(heldItem.getType()))) {
             return maxConfiguredSearch;
         }
-        System.out.println("THIS RAN");
         int maxDurability = heldItem.getType().getMaxDurability();
         int currentDamage = damageableItem.getDamage();
         maxSearch = maxDurability - currentDamage - 5;

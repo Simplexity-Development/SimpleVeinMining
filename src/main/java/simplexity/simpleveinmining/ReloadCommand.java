@@ -10,7 +10,8 @@ public class ReloadCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         ConfigHandler.getInstance().loadConfigValues();
-        commandSender.sendMessage("Config Reloaded");
+        LocaleHandler.getInstance().loadLocale();
+        commandSender.sendRichMessage(LocaleHandler.getInstance().getConfigReloaded());
         return false;
     }
 }

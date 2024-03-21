@@ -12,19 +12,25 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 public class ConfigHandler {
-    private ConfigHandler(){}
+    
+    private ConfigHandler() {
+    }
+    
     private static ConfigHandler instance;
-    public static ConfigHandler getInstance(){
+    
+    public static ConfigHandler getInstance() {
         if (instance == null) instance = new ConfigHandler();
         return instance;
     }
+    
     private final Set<Material> blockList = new HashSet<>();
     private final HashMap<String, Set<Material>> groupList = new HashMap<>();
+    private final Set<Material> additionalTools = new HashSet<>();
     private int maxBlocksToScan;
     private final Logger logger = SimpleVeinMining.getInstance().getLogger();
     private boolean isBlacklist, onlySameType, worksInCreative, runEffects, dropXP, damageTool, preventBreakingTool, respectUnbreakingEnchant, requireProperTool;
     
-    public void loadConfigValues(){
+    public void loadConfigValues() {
         SimpleVeinMining.getInstance().reloadConfig();
         FileConfiguration config = SimpleVeinMining.getInstance().getConfig();
         blockList.clear();
@@ -52,11 +58,13 @@ public class ConfigHandler {
         maxBlocksToScan = config.getInt("max-blocks-to-scan", 216);
         
     }
-    private ArrayList<Material> loadConfiguredMaterials(FileConfiguration config){
+    
+    private ArrayList<Material> loadConfiguredMaterials(FileConfiguration config) {
         List<String> materialStrings = config.getStringList("allowed-blocks");
         return checkMaterials(materialStrings, "allowed-blocks");
     }
-    private HashMap<String, Set<Material>> loadConfiguredGroups(FileConfiguration config){
+    
+    private HashMap<String, Set<Material>> loadConfiguredGroups(FileConfiguration config) {
         ConfigurationSection veinTypes = config.getConfigurationSection("types");
         HashMap<String, Set<Material>> configuredGroups = new HashMap<>();
         if (veinTypes == null) {
@@ -77,10 +85,10 @@ public class ConfigHandler {
             logger.warning("No block types were configured. The plugin will not use group functionality until this is resolved.");
         }
         return configuredGroups;
-    
+        
     }
     
-    private ArrayList<Material> checkMaterials(List<String> materialStrings, String configSectionForError){
+    private ArrayList<Material> checkMaterials(List<String> materialStrings, String configSectionForError) {
         ArrayList<Material> configuredMaterials = new ArrayList<>();
         for (String string : materialStrings) {
             Material matFromString = Material.matchMaterial(string);
@@ -92,7 +100,8 @@ public class ConfigHandler {
         }
         return configuredMaterials;
     }
-    public Set<Material> getBlockList(){
+    
+    public Set<Material> getBlockList() {
         return blockList;
     }
     
@@ -104,7 +113,7 @@ public class ConfigHandler {
         return onlySameType;
     }
     
-    public HashMap<String, Set<Material>> getGroupList(){
+    public HashMap<String, Set<Material>> getGroupList() {
         return groupList;
     }
     
