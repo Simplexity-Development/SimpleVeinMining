@@ -1,8 +1,9 @@
-package simplexity.simpleveinmining;
+package simplexity.simpleveinmining.config;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import simplexity.simpleveinmining.SimpleVeinMining;
 
 import java.util.ArrayList;
 import java.util.HashMap;

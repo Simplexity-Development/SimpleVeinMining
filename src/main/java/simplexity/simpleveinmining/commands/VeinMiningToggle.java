@@ -1,4 +1,4 @@
-package simplexity.simpleveinmining;
+package simplexity.simpleveinmining.commands;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import simplexity.simpleveinmining.SimpleVeinMining;
+import simplexity.simpleveinmining.config.LocaleHandler;
 
 public class VeinMiningToggle implements CommandExecutor {
     

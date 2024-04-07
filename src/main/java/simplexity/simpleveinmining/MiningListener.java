@@ -13,6 +13,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.persistence.PersistentDataType;
+import simplexity.simpleveinmining.commands.VeinMiningToggle;
+import simplexity.simpleveinmining.config.ConfigHandler;
+import simplexity.simpleveinmining.config.LocaleHandler;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +31,6 @@ public class MiningListener implements Listener {
         Player player = blockBreakEvent.getPlayer();
         ItemStack heldItem = player.getInventory().getItemInMainHand();
         Set<Material> blockSet = ConfigHandler.getInstance().getBlockList();
-        player.sendMessage("RUNNING");
         if (ConfigHandler.getInstance().isBlacklist() && blockSet.contains(blockMaterial)) return;
         if (!ConfigHandler.getInstance().isBlacklist() && !blockSet.contains(blockMaterial)) return;
         if (!player.hasPermission("veinmining.mining")) return;
@@ -75,6 +77,7 @@ public class MiningListener implements Listener {
         int damageAmount = 0;
         int unbreakingEnchantLevel = itemToUse.getEnchantmentLevel(Enchantment.DURABILITY);
         for (Location location : locations) {
+            if (CoreProtectHook.getInstance().getCoreProtect() != null) LogBrokenBlocks.logBrokenBlock(player, location);
             location.getBlock().breakNaturally(itemToUse, ConfigHandler.getInstance().isRunEffects(), ConfigHandler.getInstance().isDropXP());
             if (ConfigHandler.getInstance().isDamageTool()) {
                 damageAmount = damageAmount + 1;

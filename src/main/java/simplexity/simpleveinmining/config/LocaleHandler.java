@@ -1,9 +1,10 @@
-package simplexity.simpleveinmining;
+package simplexity.simpleveinmining.config;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import simplexity.simpleveinmining.SimpleVeinMining;
 
 import java.io.File;
 import java.io.IOException;

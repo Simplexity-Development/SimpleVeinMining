@@ -1,9 +1,11 @@
-package simplexity.simpleveinmining;
+package simplexity.simpleveinmining.commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+import simplexity.simpleveinmining.config.ConfigHandler;
+import simplexity.simpleveinmining.config.LocaleHandler;
 
 public class ReloadCommand implements CommandExecutor {
     

@@ -2,12 +2,16 @@ package simplexity.simpleveinmining;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.plugin.java.JavaPlugin;
+import simplexity.simpleveinmining.commands.ReloadCommand;
+import simplexity.simpleveinmining.commands.VeinMiningToggle;
+import simplexity.simpleveinmining.config.ConfigHandler;
+import simplexity.simpleveinmining.config.LocaleHandler;
 
 public final class SimpleVeinMining extends JavaPlugin {
     
     private static SimpleVeinMining instance;
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
-    
+
     @Override
     public void onEnable() {
         instance = this;
@@ -26,5 +30,5 @@ public final class SimpleVeinMining extends JavaPlugin {
     public static MiniMessage getMiniMessage() {
         return miniMessage;
     }
-    
+
 }
