@@ -17,7 +17,7 @@ import org.bukkit.persistence.PersistentDataType;
 import simplexity.simpleveinmining.commands.VeinMiningToggle;
 import simplexity.simpleveinmining.config.ConfigHandler;
 import simplexity.simpleveinmining.config.LocaleHandler;
-import simplexity.simpleveinmining.hooks.GriefPreventionHook;
+import simplexity.simpleveinmining.hooks.yardwatch.YardWatchHook;
 import simplexity.simpleveinmining.hooks.coreprotect.CoreProtectHook;
 import simplexity.simpleveinmining.hooks.coreprotect.LogBrokenBlocks;
 
@@ -82,7 +82,7 @@ public class MiningListener implements Listener {
         boolean claimedBlocksInList = false;
         int unbreakingEnchantLevel = itemToUse.getEnchantmentLevel(Enchantment.DURABILITY);
         for (Location location : locations) {
-            if (SimpleVeinMining.getInstance().isHasGP() && !GriefPreventionHook.canBreakBlock(player, location)) {
+            if (SimpleVeinMining.getInstance().isHasYardWatch() && !YardWatchHook.canBreakBlock(player, location.getBlock())) {
                 claimedBlocksInList = true;
                 continue;
             }

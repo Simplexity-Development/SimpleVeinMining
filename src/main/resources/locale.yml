@@ -1,7 +1,7 @@
 errors:
   not-enough-durability: "<dark_red>[<gold>!!</gold>]</dark_red> <yellow>Your tool is nearly broken, vein mining has been prevented.</yellow>"
   only-player: "<red>Only a player can run this command</red>"
-  claimed-blocks: "<red>Some blocks you tried to break were inside of someone's claim.</red>"
+  claimed-blocks: "<red>Some blocks you tried to break were inside a claim you do not have access to.</red>"
 messages:
   toggle:
     enabled: "<green>Vein mining has been enabled</green>"

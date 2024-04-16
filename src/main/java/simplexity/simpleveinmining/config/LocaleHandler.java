@@ -47,7 +47,7 @@ public class LocaleHandler {
         toggleEnabled = localeConfig.getString("messages.toggle.enabled", "<green>Vein mining has been enabled</green>");
         toggleDisabled = localeConfig.getString("messages.toggle.disabled", "<gray>Vein mining is now disabled</gray>");
         configReloaded = localeConfig.getString("messages.config-reloaded", "<gold>Simple Vein Mining Config has been reloaded</gold>");
-        claimedBlocks = localeConfig.getString("errors.claimed-blocks", "<red>Some blocks you tried to break were inside of someone's claim.</red>");
+        claimedBlocks = localeConfig.getString("errors.claimed-blocks", "<red>Some blocks you tried to break were inside a claim you do not have access to.</red>");
     }
     
     public String getOnlyPlayer() {

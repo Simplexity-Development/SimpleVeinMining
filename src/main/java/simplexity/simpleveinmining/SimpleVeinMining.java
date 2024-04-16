@@ -11,7 +11,7 @@ public final class SimpleVeinMining extends JavaPlugin {
     
     private static SimpleVeinMining instance;
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
-    private boolean hasGP = false;
+    private boolean hasYardWatch = false;
 
     @Override
     public void onEnable() {
@@ -19,11 +19,14 @@ public final class SimpleVeinMining extends JavaPlugin {
         this.saveDefaultConfig();
         ConfigHandler.getInstance().loadConfigValues();
         LocaleHandler.getInstance().loadLocale();
-        try {
-            Class.forName("me.ryanhamshire.GriefPrevention.GriefPrevention");
-            hasGP = true;
-        } catch (ClassNotFoundException e) {
-            hasGP = false;
+        if ((this.getServer().getPluginManager().getPlugin("YardWatch") == null) && !ConfigHandler.getInstance().isIgnoreProtections()){
+            String prefix = "[Simple Vein Mining] ";
+            this.getServer().getLogger().severe(prefix + "YardWatch plugin was not found. ");
+            this.getServer().getLogger().severe(prefix + "YardWatch is required for claims to be respected. ");
+            this.getServer().getLogger().severe(prefix + "Players will be able to vein-mine blocks inside claims they cannot access without the YardWatch plugin. ");
+            this.getServer().getLogger().severe(prefix + "If you do not use protection plugins or would like claims to be ignored, please set 'ignore-protections' to true in config.yml");
+        } else {
+            hasYardWatch = true;
         }
         this.getServer().getPluginManager().registerEvents(new MiningListener(), this);
         this.getCommand("vmreload").setExecutor(new ReloadCommand());
@@ -38,7 +41,7 @@ public final class SimpleVeinMining extends JavaPlugin {
         return miniMessage;
     }
 
-    public boolean isHasGP() {
-        return hasGP;
+    public boolean isHasYardWatch() {
+        return hasYardWatch;
     }
 }

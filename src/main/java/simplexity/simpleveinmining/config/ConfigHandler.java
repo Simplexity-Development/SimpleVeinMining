@@ -28,7 +28,8 @@ public class ConfigHandler {
     private final HashMap<String, Set<Material>> groupList = new HashMap<>();
     private int maxBlocksToBreak;
     private final Logger logger = SimpleVeinMining.getInstance().getLogger();
-    private boolean isBlacklist, onlySameType, worksInCreative, runEffects, dropXP, damageTool, preventBreakingTool, respectUnbreakingEnchant, requireProperTool;
+    private boolean isBlacklist, onlySameType, worksInCreative, runEffects, dropXP, damageTool, preventBreakingTool,
+            respectUnbreakingEnchant, requireProperTool, ignoreProtections;
     
     public void loadConfigValues() {
         SimpleVeinMining.getInstance().reloadConfig();
@@ -56,6 +57,7 @@ public class ConfigHandler {
         respectUnbreakingEnchant = config.getBoolean("damage-tool.respect-unbreaking-enchant", true);
         requireProperTool = config.getBoolean("require-proper-tool", true);
         maxBlocksToBreak = config.getInt("max-blocks-to-break", 64);
+        ignoreProtections = config.getBoolean("ignore-protections", false);
         
     }
     
@@ -147,5 +149,9 @@ public class ConfigHandler {
     
     public boolean isRespectUnbreakingEnchant() {
         return respectUnbreakingEnchant;
+    }
+
+    public boolean isIgnoreProtections() {
+        return ignoreProtections;
     }
 }

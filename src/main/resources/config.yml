@@ -75,3 +75,5 @@ damage-tool:
 require-proper-tool: true
 #max blocks to break in one pass. For reference, the largest ore blobs are 52 blocks in size
 max-blocks-to-break: 64
+# Ignore claim protections?
+ignore-protections: false
