@@ -1,4 +1,4 @@
-package simplexity.simpleveinmining;
+package simplexity.simpleveinmining.hooks.coreprotect;
 
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;

@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -16,6 +17,9 @@ import org.bukkit.persistence.PersistentDataType;
 import simplexity.simpleveinmining.commands.VeinMiningToggle;
 import simplexity.simpleveinmining.config.ConfigHandler;
 import simplexity.simpleveinmining.config.LocaleHandler;
+import simplexity.simpleveinmining.hooks.GriefPreventionHook;
+import simplexity.simpleveinmining.hooks.coreprotect.CoreProtectHook;
+import simplexity.simpleveinmining.hooks.coreprotect.LogBrokenBlocks;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +27,7 @@ import java.util.Set;
 
 public class MiningListener implements Listener {
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent blockBreakEvent) {
         Block blockBroken = blockBreakEvent.getBlock();
         Material blockMaterial = blockBroken.getType();
@@ -75,8 +79,13 @@ public class MiningListener implements Listener {
     private void breakBlocks(Set<Location> locations, Player player) {
         ItemStack itemToUse = player.getInventory().getItemInMainHand();
         int damageAmount = 0;
+        boolean claimedBlocksInList = false;
         int unbreakingEnchantLevel = itemToUse.getEnchantmentLevel(Enchantment.DURABILITY);
         for (Location location : locations) {
+            if (SimpleVeinMining.getInstance().isHasGP() && !GriefPreventionHook.canBreakBlock(player, location)) {
+                claimedBlocksInList = true;
+                continue;
+            }
             if (CoreProtectHook.getInstance().getCoreProtect() != null) LogBrokenBlocks.logBrokenBlock(player, location);
             location.getBlock().breakNaturally(itemToUse, ConfigHandler.getInstance().isRunEffects(), ConfigHandler.getInstance().isDropXP());
             if (ConfigHandler.getInstance().isDamageTool()) {
@@ -87,6 +96,7 @@ public class MiningListener implements Listener {
             damageAmount = calculateDamageWithUnbreaking(damageAmount, unbreakingEnchantLevel);
         }
         player.getInventory().getItemInMainHand().damage(damageAmount, player);
+        if (claimedBlocksInList) player.sendRichMessage(LocaleHandler.getInstance().getClaimedBlocks());
     }
     
     private int checkItemDurability(ItemStack heldItem) {

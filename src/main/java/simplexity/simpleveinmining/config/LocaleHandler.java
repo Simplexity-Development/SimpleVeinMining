@@ -18,7 +18,7 @@ public class LocaleHandler {
     private final File localeFile = new File(SimpleVeinMining.getInstance().getDataFolder(), fileName);
     private final FileConfiguration localeConfig = new YamlConfiguration();
     private final Logger logger = SimpleVeinMining.getInstance().getLogger();
-    private String almostBroken, onlyPlayer, toggleEnabled, toggleDisabled, configReloaded;
+    private String almostBroken, onlyPlayer, toggleEnabled, toggleDisabled, configReloaded, claimedBlocks;
     
     private LocaleHandler() {
         if (!localeFile.exists()) {
@@ -47,6 +47,7 @@ public class LocaleHandler {
         toggleEnabled = localeConfig.getString("messages.toggle.enabled", "<green>Vein mining has been enabled</green>");
         toggleDisabled = localeConfig.getString("messages.toggle.disabled", "<gray>Vein mining is now disabled</gray>");
         configReloaded = localeConfig.getString("messages.config-reloaded", "<gold>Simple Vein Mining Config has been reloaded</gold>");
+        claimedBlocks = localeConfig.getString("errors.claimed-blocks", "<red>Some blocks you tried to break were inside of someone's claim.</red>");
     }
     
     public String getOnlyPlayer() {
@@ -67,5 +68,9 @@ public class LocaleHandler {
     
     public String getConfigReloaded() {
         return configReloaded;
+    }
+
+    public String getClaimedBlocks() {
+        return claimedBlocks;
     }
 }

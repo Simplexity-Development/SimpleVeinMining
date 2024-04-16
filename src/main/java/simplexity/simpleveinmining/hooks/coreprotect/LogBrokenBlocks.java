@@ -1,4 +1,4 @@
-package simplexity.simpleveinmining;
+package simplexity.simpleveinmining.hooks.coreprotect;
 
 import net.coreprotect.CoreProtectAPI;
 import org.bukkit.Location;

@@ -11,6 +11,7 @@ public final class SimpleVeinMining extends JavaPlugin {
     
     private static SimpleVeinMining instance;
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
+    private boolean hasGP = false;
 
     @Override
     public void onEnable() {
@@ -18,6 +19,12 @@ public final class SimpleVeinMining extends JavaPlugin {
         this.saveDefaultConfig();
         ConfigHandler.getInstance().loadConfigValues();
         LocaleHandler.getInstance().loadLocale();
+        try {
+            Class.forName("me.ryanhamshire.GriefPrevention.GriefPrevention");
+            hasGP = true;
+        } catch (ClassNotFoundException e) {
+            hasGP = false;
+        }
         this.getServer().getPluginManager().registerEvents(new MiningListener(), this);
         this.getCommand("vmreload").setExecutor(new ReloadCommand());
         this.getCommand("vmtoggle").setExecutor(new VeinMiningToggle());
@@ -31,4 +38,7 @@ public final class SimpleVeinMining extends JavaPlugin {
         return miniMessage;
     }
 
+    public boolean isHasGP() {
+        return hasGP;
+    }
 }

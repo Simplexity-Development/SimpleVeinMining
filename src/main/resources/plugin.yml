@@ -4,6 +4,9 @@ main: simplexity.simpleveinmining.SimpleVeinMining
 api-version: '1.20'
 description: A simple plugin with configuration options for vein mining.
 website: https://github.com/Simplexity-Development/SimpleVeinMining
+softdepend:
+  - CoreProtect
+  - GriefPrevention
 permissions:
   veinmining.mining:
     default: op
