@@ -11,30 +11,29 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 public class LocaleHandler {
-    
-    private final MiniMessage miniMessage = SimpleVeinMining.getMiniMessage();
+
     private static LocaleHandler instance;
     private final String fileName = "locale.yml";
     private final File localeFile = new File(SimpleVeinMining.getInstance().getDataFolder(), fileName);
     private final FileConfiguration localeConfig = new YamlConfiguration();
     private final Logger logger = SimpleVeinMining.getInstance().getLogger();
     private String almostBroken, onlyPlayer, toggleEnabled, toggleDisabled, configReloaded, claimedBlocks;
-    
+
     private LocaleHandler() {
         if (!localeFile.exists()) {
             SimpleVeinMining.getInstance().saveResource(fileName, false);
         }
     }
-    
+
     public static LocaleHandler getInstance() {
         if (instance == null) instance = new LocaleHandler();
         return instance;
     }
-    
+
     public FileConfiguration getLocaleConfig() {
         return localeConfig;
     }
-    
+
     public void loadLocale() {
         try {
             localeConfig.load(localeFile);
@@ -49,23 +48,23 @@ public class LocaleHandler {
         configReloaded = localeConfig.getString("messages.config-reloaded", "<gold>Simple Vein Mining Config has been reloaded</gold>");
         claimedBlocks = localeConfig.getString("errors.claimed-blocks", "<red>Some blocks you tried to break were inside a claim you do not have access to.</red>");
     }
-    
+
     public String getOnlyPlayer() {
         return onlyPlayer;
     }
-    
+
     public String getAlmostBroken() {
         return almostBroken;
     }
-    
+
     public String getToggleEnabled() {
         return toggleEnabled;
     }
-    
+
     public String getToggleDisabled() {
         return toggleDisabled;
     }
-    
+
     public String getConfigReloaded() {
         return configReloaded;
     }

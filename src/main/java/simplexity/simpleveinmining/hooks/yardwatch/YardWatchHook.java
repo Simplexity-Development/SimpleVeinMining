@@ -10,7 +10,7 @@ import simplexity.simpleveinmining.SimpleVeinMining;
 import java.util.Collection;
 
 public class YardWatchHook {
-    public static boolean canBreakBlock(Player player, Block block){
+    public static boolean canBreakBlock(Player player, Block block) {
         ServicesManager servicesManager = SimpleVeinMining.getInstance().getServer().getServicesManager();
         Collection<RegisteredServiceProvider<Protection>> protections = servicesManager.getRegistrations(Protection.class);
         for (RegisteredServiceProvider<Protection> protection : protections) {

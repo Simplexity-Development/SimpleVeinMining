@@ -9,17 +9,17 @@ import java.util.Queue;
 import java.util.Set;
 
 public class CheckBlock {
-    
+
     private CheckBlock() {
     }
-    
+
     private static CheckBlock instance;
-    
+
     public static CheckBlock getInstance() {
         if (instance == null) instance = new CheckBlock();
         return instance;
     }
-    
+
     public Set<Location> getBlockList(Set<Material> targets, Location start, int max) {
         Set<Location> valid_blocks = new HashSet<>();
         Queue<Location> next_blocks = new LinkedList<>();
@@ -31,7 +31,7 @@ public class CheckBlock {
         }
         return valid_blocks;
     }
-    
+
     public void checkBlockRecursive(Set<Material> targets, Set<Location> valid, Queue<Location> next, Location current, int max) {
         valid.add(current);
         int[] positions = {-1, 0, 1};

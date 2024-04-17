@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MiningListener implements Listener {
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent blockBreakEvent) {
         Block blockBroken = blockBreakEvent.getBlock();
@@ -57,7 +57,7 @@ public class MiningListener implements Listener {
         Set<Location> blocksToBreak = CheckBlock.getInstance().getBlockList(blocksToCheck, blockLocation, maxSearch);
         breakBlocks(blocksToBreak, player);
     }
-    
+
     private Set<Material> findGroup(Material materialOfBrokenBlock) {
         HashMap<String, Set<Material>> groupList = ConfigHandler.getInstance().getGroupList();
         String key = null;
@@ -75,18 +75,19 @@ public class MiningListener implements Listener {
         }
         return groupList.get(key);
     }
-    
+
     private void breakBlocks(Set<Location> locations, Player player) {
         ItemStack itemToUse = player.getInventory().getItemInMainHand();
         int damageAmount = 0;
         boolean claimedBlocksInList = false;
         int unbreakingEnchantLevel = itemToUse.getEnchantmentLevel(Enchantment.DURABILITY);
         for (Location location : locations) {
-            if (SimpleVeinMining.getInstance().isHasYardWatch() && !YardWatchHook.canBreakBlock(player, location.getBlock())) {
+            if (SimpleVeinMining.getInstance().isYardWatchEnabled() && !YardWatchHook.canBreakBlock(player, location.getBlock())) {
                 claimedBlocksInList = true;
                 continue;
             }
-            if (CoreProtectHook.getInstance().getCoreProtect() != null) LogBrokenBlocks.logBrokenBlock(player, location);
+            if (CoreProtectHook.getInstance().getCoreProtect() != null)
+                LogBrokenBlocks.logBrokenBlock(player, location);
             location.getBlock().breakNaturally(itemToUse, ConfigHandler.getInstance().isRunEffects(), ConfigHandler.getInstance().isDropXP());
             if (ConfigHandler.getInstance().isDamageTool()) {
                 damageAmount = damageAmount + 1;
@@ -98,7 +99,7 @@ public class MiningListener implements Listener {
         player.getInventory().getItemInMainHand().damage(damageAmount, player);
         if (claimedBlocksInList) player.sendRichMessage(LocaleHandler.getInstance().getClaimedBlocks());
     }
-    
+
     private int checkItemDurability(ItemStack heldItem) {
         int maxSearch;
         int maxConfiguredSearch = ConfigHandler.getInstance().getMaxBlocksToBreak();
@@ -113,7 +114,7 @@ public class MiningListener implements Listener {
         maxSearch = maxDurability - currentDamage - 5;
         return Math.min(maxSearch, maxConfiguredSearch);
     }
-    
+
     private int calculateDamageWithUnbreaking(int damageAmount, int unbreakingAmount) {
         double unbreakingDamageReduction = 0.2;
         for (int i = 0; i < unbreakingAmount; i++) {
@@ -121,5 +122,5 @@ public class MiningListener implements Listener {
         }
         return damageAmount;
     }
-    
+
 }
