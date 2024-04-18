@@ -1,6 +1,9 @@
 package simplexity.simpleveinmining;
 
+import me.youhavetrouble.yardwatch.Protection;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import simplexity.simpleveinmining.commands.ReloadCommand;
 import simplexity.simpleveinmining.commands.VeinMiningToggle;
@@ -22,16 +25,7 @@ public final class SimpleVeinMining extends JavaPlugin {
         this.saveDefaultConfig();
         ConfigHandler.getInstance().loadConfigValues();
         LocaleHandler.getInstance().loadLocale();
-        if ((this.getServer().getPluginManager().getPlugin("YardWatch") == null) && !ConfigHandler.getInstance().isIgnoreProtections()) {
-            String prefix = "[SimpleVeinMining] ";
-            Logger logger = instance.getLogger();
-            logger.severe(prefix + "YardWatch plugin was not found. ");
-            logger.severe(prefix + "YardWatch is required for claims to be respected. ");
-            logger.severe(prefix + "Without it, players will be able to vein-mine blocks inside claims they should not be able to access.");
-            logger.severe(prefix + "If you do not use protection plugins or would like claims to be ignored, please set 'ignore-protections' to true in config.yml");
-        } else {
-            yardWatchEnabled = true;
-        }
+        checkForYardWatch();
         registerListeners();
         registerCommands();
     }
@@ -43,6 +37,31 @@ public final class SimpleVeinMining extends JavaPlugin {
     private void registerCommands() {
         Objects.requireNonNull(this.getCommand("vmreload")).setExecutor(new ReloadCommand());
         Objects.requireNonNull(this.getCommand("vmtoggle")).setExecutor(new VeinMiningToggle());
+    }
+
+    private void checkForYardWatch(){
+        boolean classExists = true;
+        try {
+            Class.forName("me.youhavetrouble.yardwatch.Protection");
+        } catch (ClassNotFoundException e) {
+            classExists = false;
+        }
+        if (!classExists && !ConfigHandler.getInstance().isIgnoreProtections()) {
+            yellAtServerOwner();
+        }
+        if (classExists) {
+            yardWatchEnabled = true;
+        }
+    }
+
+    private void yellAtServerOwner() {
+        Logger logger = instance.getLogger();
+        logger.severe("YardWatch API was not found");
+        logger.warning("For a protection plugin to integrate properly, it needs to implement YardWatch API");
+        logger.warning("If you have a protection plugin that does not implement that API, please check if the YardWatch plugin has a temporary implementation to cover that plugin");
+        logger.warning("If it does, you can download the YardWatch plugin for integration until that plugin adds support for YardWatch");
+        logger.warning("https://github.com/YouHaveTrouble/YardWatch");
+        logger.warning("If you do not have protection plugins, or do not want to integrate SimpleVeinMining with protection plugins, please set 'ignore-protections' in config.yml to 'true'");
     }
 
     public static SimpleVeinMining getInstance() {

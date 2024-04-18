@@ -77,3 +77,4 @@ require-proper-tool: true
 max-blocks-to-break: 64
 # Ignore claim protections?
 ignore-protections: false
+
