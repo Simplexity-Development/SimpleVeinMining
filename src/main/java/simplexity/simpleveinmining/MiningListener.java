@@ -82,7 +82,7 @@ public class MiningListener implements Listener {
         boolean claimedBlocksInList = false;
         int unbreakingEnchantLevel = itemToUse.getEnchantmentLevel(Enchantment.DURABILITY);
         for (Location location : locations) {
-            if (SimpleVeinMining.getInstance().isYardWatchEnabled() && !YardWatchHook.canBreakBlock(player, location.getBlock())) {
+            if (SimpleVeinMining.getInstance().hasYardWatchProvider() && !YardWatchHook.canBreakBlock(player, location.getBlock())) {
                 claimedBlocksInList = true;
                 continue;
             }
