@@ -77,8 +77,6 @@ require-proper-tool: true
 require-lore:
   enabled: false
   lore: "<white>Vein Mining</white>"
-
-
 #max blocks to break in one pass. For reference, the largest ore blobs are 52 blocks in size
 max-blocks-to-break: 64
 # Ignore claim protections?
