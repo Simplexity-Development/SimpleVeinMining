@@ -1,6 +1,8 @@
 package simplexity.simpleveinmining;
 
 import com.destroystokyo.paper.MaterialSetTag;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,12 +19,13 @@ import org.bukkit.persistence.PersistentDataType;
 import simplexity.simpleveinmining.commands.VeinMiningToggle;
 import simplexity.simpleveinmining.config.ConfigHandler;
 import simplexity.simpleveinmining.config.LocaleHandler;
-import simplexity.simpleveinmining.hooks.yardwatch.YardWatchHook;
 import simplexity.simpleveinmining.hooks.coreprotect.CoreProtectHook;
 import simplexity.simpleveinmining.hooks.coreprotect.LogBrokenBlocks;
+import simplexity.simpleveinmining.hooks.yardwatch.YardWatchHook;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class MiningListener implements Listener {
@@ -42,6 +45,7 @@ public class MiningListener implements Listener {
         if (!toggleEnabled) return;
         if (!blockBroken.isPreferredTool(heldItem) && ConfigHandler.getInstance().isRequireProperTool()) return;
         if (player.getGameMode().equals(GameMode.CREATIVE) && !ConfigHandler.getInstance().isWorksInCreative()) return;
+        if (ConfigHandler.getInstance().isRequireLore() && !hasRequiredLore(heldItem)) return;
         if (player.isSneaking()) return;
         int maxSearch = checkItemDurability(heldItem);
         if (maxSearch < 5) {
@@ -121,6 +125,24 @@ public class MiningListener implements Listener {
             damageAmount = (int) (damageAmount * (1 - unbreakingDamageReduction));
         }
         return damageAmount;
+    }
+
+    private boolean hasRequiredLore(ItemStack item) {
+        Component loreComponent = SimpleVeinMining.getMiniMessage().deserialize(ConfigHandler.getInstance().getLoreString());
+        loreComponent = loreComponent.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+        List<Component> lore = item.lore();
+        if (lore == null || lore.isEmpty()) {
+            return false;
+        }
+        for (Component component : lore) {
+            if (component.equals(loreComponent)) return true;
+            List<Component> childComponents = component.children();
+            if (childComponents.isEmpty()) continue;
+            for (Component childComponent : childComponents) {
+                if (childComponent.equals(loreComponent)) return true;
+            }
+        }
+        return false;
     }
 
 }

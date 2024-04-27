@@ -29,7 +29,8 @@ public class ConfigHandler {
     private int maxBlocksToBreak;
     private final Logger logger = SimpleVeinMining.getInstance().getLogger();
     private boolean isBlacklist, onlySameType, worksInCreative, runEffects, dropXP, damageTool, preventBreakingTool,
-            respectUnbreakingEnchant, requireProperTool, ignoreProtections;
+            respectUnbreakingEnchant, requireProperTool, ignoreProtections, requireLore;
+    private String loreString;
     
     public void loadConfigValues() {
         SimpleVeinMining.getInstance().reloadConfig();
@@ -58,7 +59,8 @@ public class ConfigHandler {
         requireProperTool = config.getBoolean("require-proper-tool", true);
         maxBlocksToBreak = config.getInt("max-blocks-to-break", 64);
         ignoreProtections = config.getBoolean("ignore-protections", false);
-        
+        requireLore = config.getBoolean("require-lore.enabled", false);
+        loreString = config.getString("require-lore.lore", "<white>Vein Mining</white>");
     }
     
     private ArrayList<Material> loadConfiguredMaterials(FileConfiguration config) {
@@ -153,5 +155,13 @@ public class ConfigHandler {
 
     public boolean isIgnoreProtections() {
         return ignoreProtections;
+    }
+
+    public boolean isRequireLore() {
+        return requireLore;
+    }
+
+    public String getLoreString(){
+        return loreString;
     }
 }

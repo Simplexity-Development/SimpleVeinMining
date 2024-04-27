@@ -13,6 +13,7 @@ import java.util.Objects;
 public final class SimpleVeinMining extends JavaPlugin {
 
     private static SimpleVeinMining instance;
+    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     @Override
     public void onEnable() {
@@ -36,6 +37,10 @@ public final class SimpleVeinMining extends JavaPlugin {
 
     public static SimpleVeinMining getInstance() {
         return instance;
+    }
+
+    public static MiniMessage getMiniMessage() {
+        return miniMessage;
     }
 
     public boolean hasYardWatchProvider() {

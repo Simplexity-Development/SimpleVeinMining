@@ -73,6 +73,12 @@ damage-tool:
 # NOTE: proper tool does not necessarily mean effective tool, for instance, a pickaxe is a proper tool for dirt since it will still drop the item.
 # A shovel is not a proper tool for stone because it will not drop the item.
 require-proper-tool: true
+# Should a tool need a specific lore on it?
+require-lore:
+  enabled: false
+  lore: "<white>Vein Mining</white>"
+
+
 #max blocks to break in one pass. For reference, the largest ore blobs are 52 blocks in size
 max-blocks-to-break: 64
 # Ignore claim protections?
