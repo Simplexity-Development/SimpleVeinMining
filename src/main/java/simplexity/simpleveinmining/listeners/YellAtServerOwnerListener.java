@@ -1,10 +1,11 @@
-package simplexity.simpleveinmining;
+package simplexity.simpleveinmining.listeners;
 
 import java.util.logging.Logger;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
+import simplexity.simpleveinmining.SimpleVeinMining;
 import simplexity.simpleveinmining.config.ConfigHandler;
 
 public class YellAtServerOwnerListener implements Listener {

@@ -7,6 +7,8 @@ import simplexity.simpleveinmining.commands.ReloadCommand;
 import simplexity.simpleveinmining.commands.VeinMiningToggle;
 import simplexity.simpleveinmining.config.ConfigHandler;
 import simplexity.simpleveinmining.config.LocaleHandler;
+import simplexity.simpleveinmining.listeners.MiningListener;
+import simplexity.simpleveinmining.listeners.YellAtServerOwnerListener;
 
 import java.util.Objects;
 

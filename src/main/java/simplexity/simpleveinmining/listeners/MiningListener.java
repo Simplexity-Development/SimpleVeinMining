@@ -1,6 +1,5 @@
-package simplexity.simpleveinmining;
+package simplexity.simpleveinmining.listeners;
 
-import com.destroystokyo.paper.MaterialSetTag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.GameMode;
@@ -16,6 +15,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.persistence.PersistentDataType;
+import simplexity.simpleveinmining.CheckBlock;
+import simplexity.simpleveinmining.SimpleVeinMining;
 import simplexity.simpleveinmining.commands.VeinMiningToggle;
 import simplexity.simpleveinmining.config.ConfigHandler;
 import simplexity.simpleveinmining.config.LocaleHandler;
@@ -84,7 +85,7 @@ public class MiningListener implements Listener {
         ItemStack itemToUse = player.getInventory().getItemInMainHand();
         int damageAmount = 0;
         boolean claimedBlocksInList = false;
-        int unbreakingEnchantLevel = itemToUse.getEnchantmentLevel(Enchantment.DURABILITY);
+        int unbreakingEnchantLevel = itemToUse.getEnchantmentLevel(Enchantment.UNBREAKING);
         for (Location location : locations) {
             if (SimpleVeinMining.getInstance().hasYardWatchProvider() && !YardWatchHook.canBreakBlock(player, location.getBlock())) {
                 claimedBlocksInList = true;
@@ -109,11 +110,11 @@ public class MiningListener implements Listener {
         int maxConfiguredSearch = ConfigHandler.getInstance().getMaxBlocksToBreak();
         if (!(ConfigHandler.getInstance().isDamageTool() &&
                 ConfigHandler.getInstance().isPreventBreakingTool() &&
-                (heldItem.getItemMeta() instanceof Damageable damageableItem) &&
-                MaterialSetTag.ITEMS_TOOLS.isTagged(heldItem.getType()))) {
+                (heldItem.getItemMeta() instanceof Damageable damageableItem))) {
             return maxConfiguredSearch;
         }
-        int maxDurability = heldItem.getType().getMaxDurability();
+        if (!damageableItem.hasMaxDamage()) return maxConfiguredSearch;
+        int maxDurability = damageableItem.getMaxDamage();
         int currentDamage = damageableItem.getDamage();
         maxSearch = maxDurability - currentDamage - 5;
         return Math.min(maxSearch, maxConfiguredSearch);
