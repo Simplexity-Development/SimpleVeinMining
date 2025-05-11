@@ -1,4 +1,4 @@
-# Which blocks should be affected by vein mining?
+# If you need a more in-depth explanation of these options, please look at https://github.com/Simplexity-Development/SimpleVeinMining/blob/master/README.md
 allowed-blocks:
   - "minecraft:coal_ore"
   - "minecraft:coal_block"
@@ -23,11 +23,7 @@ allowed-blocks:
   - "minecraft:nether_gold_ore"
   - "minecraft:nether_quartz_ore"
   - "minecraft:ancient_debris"
-# Should the block list be a blacklist instead of a whitelist?
 allowed-blocks-is-blacklist: false
-# Should only blocks of the same type be vein-mined together? For instance
-## If a player mines iron and there's coal, should only the iron be mined?
-#
 same-type: true
 types:
   coal:
@@ -58,27 +54,22 @@ types:
   redstone:
     - "minecraft:redstone_ore"
     - "minecraft:deepslate_redstone_ore"
-# Should vein-mining work in creative mode
 works-in-creative: false
-# Should sound effects and particles play?
 run-effects: true
-# Should blocks that would normally drop xp still drop xp when vein-mined?
 drop-xp: true
-# Should mined blocks wear down the tool used?
 damage-tool:
   enabled: true
   prevent-breaking: true
   respect-unbreaking-enchant: true
-# Should players be required to use the proper tool for the block?
-# NOTE: proper tool does not necessarily mean effective tool, for instance, a pickaxe is a proper tool for dirt since it will still drop the item.
-# A shovel is not a proper tool for stone because it will not drop the item.
 require-proper-tool: true
-# Should a tool need a specific lore on it?
 require-lore:
   enabled: false
   lore: "<white>Vein Mining</white>"
-#max blocks to break in one pass. For reference, the largest ore blobs are 52 blocks in size
+require-item-model:
+  enabled: false
+  valid-models:
+    - "minecraft:stick"
 max-blocks-to-break: 64
-# Ignore claim protections?
 ignore-protections: false
+crouch-prevents-vein-mining: false
 

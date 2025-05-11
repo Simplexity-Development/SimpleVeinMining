@@ -1,6 +1,8 @@
 package simplexity.simpleveinmining.config;
 
+import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import simplexity.simpleveinmining.SimpleVeinMining;
@@ -25,11 +27,12 @@ public class ConfigHandler {
     }
     
     private final Set<Material> blockList = new HashSet<>();
+    private final HashSet<Key> itemModels = new HashSet<>();
     private final HashMap<String, Set<Material>> groupList = new HashMap<>();
     private int maxBlocksToBreak;
     private final Logger logger = SimpleVeinMining.getInstance().getLogger();
     private boolean isBlacklist, onlySameType, worksInCreative, runEffects, dropXP, damageTool, preventBreakingTool,
-            respectUnbreakingEnchant, requireProperTool, ignoreProtections, requireLore;
+            respectUnbreakingEnchant, requireProperTool, ignoreProtections, requireLore, requireItemModel, crouchPreventsVeinMining;
     private String loreString;
     
     public void loadConfigValues() {
@@ -61,6 +64,11 @@ public class ConfigHandler {
         ignoreProtections = config.getBoolean("ignore-protections", false);
         requireLore = config.getBoolean("require-lore.enabled", false);
         loreString = config.getString("require-lore.lore", "<white>Vein Mining</white>");
+        requireItemModel = config.getBoolean("require-item-model.enabled", false);
+        if (requireItemModel) {
+            verifyItemModels(config);
+        }
+        crouchPreventsVeinMining = config.getBoolean("crouch-prevents-vein-mining", false);
     }
     
     private ArrayList<Material> loadConfiguredMaterials(FileConfiguration config) {
@@ -104,9 +112,28 @@ public class ConfigHandler {
         }
         return configuredMaterials;
     }
+
+    private void verifyItemModels(FileConfiguration config) {
+        itemModels.clear();
+        List<String> itemModelStrings = config.getStringList("require-item-model.valid-models");
+        if (itemModelStrings.isEmpty()) return;
+        for (String itemModelString : itemModelStrings) {
+            String[] split = itemModelString.split(":");
+            if (split.length != 2) {
+                logger.warning(itemModelString + " is not a valid item model, these must be declared as \"namespace:location\", please check your syntax");
+                continue;
+            }
+            Key key = new NamespacedKey(split[0], split[1]);
+            itemModels.add(key);
+        }
+    }
     
     public Set<Material> getBlockList() {
         return blockList;
+    }
+
+    public Set<Key> getRequiredItemModels(){
+        return itemModels;
     }
     
     public boolean isBlacklist() {
@@ -163,5 +190,13 @@ public class ConfigHandler {
 
     public String getLoreString(){
         return loreString;
+    }
+
+    public boolean requiresItemModel() {
+        return requireItemModel;
+    }
+
+    public boolean doesCrouchPreventVeinMining(){
+        return crouchPreventsVeinMining;
     }
 }

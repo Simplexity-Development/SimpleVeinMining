@@ -2,7 +2,7 @@ name: SimpleVeinMining
 version: '${project.version}'
 main: simplexity.simpleveinmining.SimpleVeinMining
 author: RhythmicSystem
-api-version: '1.20.5'
+api-version: '1.21.5'
 description: A simple plugin with configuration options for vein mining.
 website: https://github.com/Simplexity-Development/SimpleVeinMining
 permissions:

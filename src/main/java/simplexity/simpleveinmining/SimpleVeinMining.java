@@ -21,6 +21,8 @@ public final class SimpleVeinMining extends JavaPlugin {
     public void onEnable() {
         instance = this;
         this.saveDefaultConfig();
+        getConfig().options().copyDefaults(true);
+        saveConfig();
         ConfigHandler.getInstance().loadConfigValues();
         LocaleHandler.getInstance().loadLocale();
         registerListeners();

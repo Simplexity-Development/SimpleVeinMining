@@ -1,10 +1,13 @@
 package simplexity.simpleveinmining.listeners;
 
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -29,6 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("UnstableApiUsage")
 public class MiningListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -44,6 +48,8 @@ public class MiningListener implements Listener {
         if (!player.hasPermission("veinmining.mining")) return;
         boolean toggleEnabled = player.getPersistentDataContainer().getOrDefault(VeinMiningToggle.toggleKey, PersistentDataType.BOOLEAN, true);
         if (!toggleEnabled) return;
+        if (ConfigHandler.getInstance().requiresItemModel() && !hasRequiredItemModel(heldItem)) return;
+        if (ConfigHandler.getInstance().doesCrouchPreventVeinMining() && player.isSneaking()) return;
         if (!blockBroken.isPreferredTool(heldItem) && ConfigHandler.getInstance().isRequireProperTool()) return;
         if (player.getGameMode().equals(GameMode.CREATIVE) && !ConfigHandler.getInstance().isWorksInCreative()) return;
         if (ConfigHandler.getInstance().isRequireLore() && !hasRequiredLore(heldItem)) return;
@@ -144,6 +150,13 @@ public class MiningListener implements Listener {
             }
         }
         return false;
+    }
+
+    private boolean hasRequiredItemModel(ItemStack item){
+        Set<Key> allowedItemModels = ConfigHandler.getInstance().getRequiredItemModels();
+        if (allowedItemModels.isEmpty()) return true;
+        Key modelKey = item.getData(DataComponentTypes.ITEM_MODEL);
+        return allowedItemModels.contains(modelKey);
     }
 
 }
