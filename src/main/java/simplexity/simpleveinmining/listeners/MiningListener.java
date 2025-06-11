@@ -1,5 +1,10 @@
 package simplexity.simpleveinmining.listeners;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -7,7 +12,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -27,10 +31,7 @@ import simplexity.simpleveinmining.hooks.coreprotect.CoreProtectHook;
 import simplexity.simpleveinmining.hooks.coreprotect.LogBrokenBlocks;
 import simplexity.simpleveinmining.hooks.yardwatch.YardWatchHook;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("UnstableApiUsage")
 public class MiningListener implements Listener {
@@ -43,6 +44,22 @@ public class MiningListener implements Listener {
         Player player = blockBreakEvent.getPlayer();
         ItemStack heldItem = player.getInventory().getItemInMainHand();
         Set<Material> blockSet = ConfigHandler.getInstance().getBlockList();
+
+        if (SimpleVeinMining.getInstance().isWorldGuardEnabled()) {
+            try {
+                RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+                com.sk89q.worldedit.world.World world = BukkitAdapter.adapt(blockLocation.getWorld());
+                BlockVector3 location = BlockVector3.at(blockLocation.getX(), blockLocation.getY(), blockLocation.getZ());
+                ApplicableRegionSet regions = Objects.requireNonNull(container.get(world)).getApplicableRegions(location);
+                if (!regions.testState(null, SimpleVeinMining.getInstance().getVeinMiningFlag())) {
+                    player.sendRichMessage("<red>Vein mining is disabled in this region!</red>");
+                    return;
+                }
+            } catch (Exception e) {
+                SimpleVeinMining.getInstance().getLogger().warning("Error checking WorldGuard regions: " + e.getMessage());
+            }
+        }
+
         if (ConfigHandler.getInstance().isBlacklist() && blockSet.contains(blockMaterial)) return;
         if (!ConfigHandler.getInstance().isBlacklist() && !blockSet.contains(blockMaterial)) return;
         if (!player.hasPermission("veinmining.mining")) return;
@@ -152,11 +169,10 @@ public class MiningListener implements Listener {
         return false;
     }
 
-    private boolean hasRequiredItemModel(ItemStack item){
+    private boolean hasRequiredItemModel(ItemStack item) {
         Set<Key> allowedItemModels = ConfigHandler.getInstance().getRequiredItemModels();
         if (allowedItemModels.isEmpty()) return true;
         Key modelKey = item.getData(DataComponentTypes.ITEM_MODEL);
         return allowedItemModels.contains(modelKey);
     }
-
 }
