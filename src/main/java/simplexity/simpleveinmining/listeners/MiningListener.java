@@ -31,7 +31,12 @@ import simplexity.simpleveinmining.hooks.coreprotect.CoreProtectHook;
 import simplexity.simpleveinmining.hooks.coreprotect.LogBrokenBlocks;
 import simplexity.simpleveinmining.hooks.yardwatch.YardWatchHook;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
 
 @SuppressWarnings("UnstableApiUsage")
 public class MiningListener implements Listener {
@@ -52,7 +57,7 @@ public class MiningListener implements Listener {
                 BlockVector3 location = BlockVector3.at(blockLocation.getX(), blockLocation.getY(), blockLocation.getZ());
                 ApplicableRegionSet regions = Objects.requireNonNull(container.get(world)).getApplicableRegions(location);
                 if (!regions.testState(null, SimpleVeinMining.getInstance().getVeinMiningFlag())) {
-                    player.sendRichMessage("<red>Vein mining is disabled in this region!</red>");
+                    player.sendRichMessage(LocaleHandler.getInstance().getWorldguardRegionDisabled());
                     return;
                 }
             } catch (Exception e) {

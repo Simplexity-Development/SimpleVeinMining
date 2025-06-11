@@ -1,6 +1,5 @@
 package simplexity.simpleveinmining.config;
 
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,7 +16,7 @@ public class LocaleHandler {
     private final File localeFile = new File(SimpleVeinMining.getInstance().getDataFolder(), fileName);
     private final FileConfiguration localeConfig = new YamlConfiguration();
     private final Logger logger = SimpleVeinMining.getInstance().getLogger();
-    private String almostBroken, onlyPlayer, toggleEnabled, toggleDisabled, configReloaded, claimedBlocks;
+    private String almostBroken, onlyPlayer, toggleEnabled, toggleDisabled, configReloaded, claimedBlocks, worldguardRegionDisabled;
 
     private LocaleHandler() {
         if (!localeFile.exists()) {
@@ -47,6 +46,8 @@ public class LocaleHandler {
         toggleDisabled = localeConfig.getString("messages.toggle.disabled", "<gray>Vein mining is now disabled</gray>");
         configReloaded = localeConfig.getString("messages.config-reloaded", "<gold>Simple Vein Mining Config has been reloaded</gold>");
         claimedBlocks = localeConfig.getString("errors.claimed-blocks", "<red>Some blocks you tried to break were inside a claim you do not have access to.</red>");
+        worldguardRegionDisabled = localeConfig.getString("errors.world-guard-region-disabled", "<red>Vein mining is disabled in this region!</red>");
+
     }
 
     public String getOnlyPlayer() {
@@ -71,5 +72,9 @@ public class LocaleHandler {
 
     public String getClaimedBlocks() {
         return claimedBlocks;
+    }
+
+    public String getWorldguardRegionDisabled() {
+        return worldguardRegionDisabled;
     }
 }
