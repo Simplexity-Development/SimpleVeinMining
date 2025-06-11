@@ -16,7 +16,8 @@ public class LocaleHandler {
     private final File localeFile = new File(SimpleVeinMining.getInstance().getDataFolder(), fileName);
     private final FileConfiguration localeConfig = new YamlConfiguration();
     private final Logger logger = SimpleVeinMining.getInstance().getLogger();
-    private String almostBroken, onlyPlayer, toggleEnabled, toggleDisabled, configReloaded, claimedBlocks, worldguardRegionDisabled;
+    private String almostBroken, onlyPlayer, toggleEnabled, toggleDisabled, configReloaded, claimedBlocks,
+            worldguardRegionDisabled, issueWithProtectionCheck;
 
     private LocaleHandler() {
         if (!localeFile.exists()) {
@@ -47,7 +48,7 @@ public class LocaleHandler {
         configReloaded = localeConfig.getString("messages.config-reloaded", "<gold>Simple Vein Mining Config has been reloaded</gold>");
         claimedBlocks = localeConfig.getString("errors.claimed-blocks", "<red>Some blocks you tried to break were inside a claim you do not have access to.</red>");
         worldguardRegionDisabled = localeConfig.getString("errors.world-guard-region-disabled", "<red>Vein mining is disabled in this region!</red>");
-
+        issueWithProtectionCheck = localeConfig.getString("errors.issue-with-protection-check", "<red>An issue occurred trying to check if you have the ability to break blocks here. Please tell an administrator if this continues to occur</red>");
     }
 
     public String getOnlyPlayer() {
@@ -76,5 +77,9 @@ public class LocaleHandler {
 
     public String getWorldguardRegionDisabled() {
         return worldguardRegionDisabled;
+    }
+
+    public String getIssueWithProtectionCheck() {
+        return issueWithProtectionCheck;
     }
 }

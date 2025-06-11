@@ -4,7 +4,9 @@ main: simplexity.simpleveinmining.SimpleVeinMining
 author: RhythmicSystem
 api-version: '1.21'
 load: STARTUP
-softdepend: [ WorldGuard ]
+softdepend:
+  - WorldGuard
+  - CoreProtect
 description: A simple plugin with configuration options for vein mining.
 website: https://github.com/Simplexity-Development/SimpleVeinMining
 permissions:

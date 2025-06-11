@@ -1,10 +1,5 @@
 package simplexity.simpleveinmining.listeners;
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -22,6 +17,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.persistence.PersistentDataType;
+import org.slf4j.Logger;
 import simplexity.simpleveinmining.CheckBlock;
 import simplexity.simpleveinmining.SimpleVeinMining;
 import simplexity.simpleveinmining.commands.VeinMiningToggle;
@@ -29,19 +25,22 @@ import simplexity.simpleveinmining.config.ConfigHandler;
 import simplexity.simpleveinmining.config.LocaleHandler;
 import simplexity.simpleveinmining.hooks.coreprotect.CoreProtectHook;
 import simplexity.simpleveinmining.hooks.coreprotect.LogBrokenBlocks;
+import simplexity.simpleveinmining.hooks.worldguard.WorldGuardHook;
 import simplexity.simpleveinmining.hooks.yardwatch.YardWatchHook;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 
 @SuppressWarnings("UnstableApiUsage")
 public class MiningListener implements Listener {
 
+    Logger logger = SimpleVeinMining.getInstance().getSLF4JLogger();
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+
     public void onBlockBreak(BlockBreakEvent blockBreakEvent) {
         Block blockBroken = blockBreakEvent.getBlock();
         Material blockMaterial = blockBroken.getType();
@@ -51,18 +50,7 @@ public class MiningListener implements Listener {
         Set<Material> blockSet = ConfigHandler.getInstance().getBlockList();
 
         if (SimpleVeinMining.getInstance().isWorldGuardEnabled()) {
-            try {
-                RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-                com.sk89q.worldedit.world.World world = BukkitAdapter.adapt(blockLocation.getWorld());
-                BlockVector3 location = BlockVector3.at(blockLocation.getX(), blockLocation.getY(), blockLocation.getZ());
-                ApplicableRegionSet regions = Objects.requireNonNull(container.get(world)).getApplicableRegions(location);
-                if (!regions.testState(null, SimpleVeinMining.getInstance().getVeinMiningFlag())) {
-                    player.sendRichMessage(LocaleHandler.getInstance().getWorldguardRegionDisabled());
-                    return;
-                }
-            } catch (Exception e) {
-                SimpleVeinMining.getInstance().getLogger().warning("Error checking WorldGuard regions: " + e.getMessage());
-            }
+            if (!WorldGuardHook.getInstance().canBreakBlockInRegion(player, blockLocation)) return;
         }
 
         if (ConfigHandler.getInstance().isBlacklist() && blockSet.contains(blockMaterial)) return;
@@ -137,8 +125,8 @@ public class MiningListener implements Listener {
         int maxSearch;
         int maxConfiguredSearch = ConfigHandler.getInstance().getMaxBlocksToBreak();
         if (!(ConfigHandler.getInstance().isDamageTool() &&
-                ConfigHandler.getInstance().isPreventBreakingTool() &&
-                (heldItem.getItemMeta() instanceof Damageable damageableItem))) {
+              ConfigHandler.getInstance().isPreventBreakingTool() &&
+              (heldItem.getItemMeta() instanceof Damageable damageableItem))) {
             return maxConfiguredSearch;
         }
         if (!damageableItem.hasMaxDamage()) return maxConfiguredSearch;
