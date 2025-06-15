@@ -4,20 +4,18 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.persistence.PersistentDataType;
-import org.slf4j.Logger;
 import simplexity.simpleveinmining.CheckBlock;
 import simplexity.simpleveinmining.SimpleVeinMining;
 import simplexity.simpleveinmining.commands.VeinMiningToggle;
@@ -25,19 +23,18 @@ import simplexity.simpleveinmining.config.ConfigHandler;
 import simplexity.simpleveinmining.config.LocaleHandler;
 import simplexity.simpleveinmining.hooks.coreprotect.CoreProtectHook;
 import simplexity.simpleveinmining.hooks.coreprotect.LogBrokenBlocks;
-import simplexity.simpleveinmining.hooks.worldguard.WorldGuardHook;
-import simplexity.simpleveinmining.hooks.yardwatch.YardWatchHook;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @SuppressWarnings("UnstableApiUsage")
 public class MiningListener implements Listener {
 
-    Logger logger = SimpleVeinMining.getInstance().getSLF4JLogger();
+    Set<Location> veinMinedBlocks = ConcurrentHashMap.newKeySet();
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 
@@ -45,40 +42,54 @@ public class MiningListener implements Listener {
         Block blockBroken = blockBreakEvent.getBlock();
         Material blockMaterial = blockBroken.getType();
         Location blockLocation = blockBroken.getLocation().toBlockLocation();
+
+        if (veinMinedBlocks.contains(blockLocation)) {
+            veinMinedBlocks.remove(blockLocation);
+            return;
+        }
+
         Player player = blockBreakEvent.getPlayer();
+
+        boolean toggleEnabled = player.getPersistentDataContainer().getOrDefault(VeinMiningToggle.toggleKey, PersistentDataType.BOOLEAN, true);
+        if (!toggleEnabled) return;
+
         ItemStack heldItem = player.getInventory().getItemInMainHand();
         Set<Material> blockSet = ConfigHandler.getInstance().getBlockList();
-
-        if (SimpleVeinMining.getInstance().isWorldGuardEnabled()) {
-            if (!WorldGuardHook.getInstance().canBreakBlockInRegion(player, blockLocation)) return;
-        }
 
         if (ConfigHandler.getInstance().isBlacklist() && blockSet.contains(blockMaterial)) return;
         if (!ConfigHandler.getInstance().isBlacklist() && !blockSet.contains(blockMaterial)) return;
         if (!player.hasPermission("veinmining.mining")) return;
-        boolean toggleEnabled = player.getPersistentDataContainer().getOrDefault(VeinMiningToggle.toggleKey, PersistentDataType.BOOLEAN, true);
-        if (!toggleEnabled) return;
         if (ConfigHandler.getInstance().requiresItemModel() && !hasRequiredItemModel(heldItem)) return;
         if (ConfigHandler.getInstance().doesCrouchPreventVeinMining() && player.isSneaking()) return;
         if (!blockBroken.isPreferredTool(heldItem) && ConfigHandler.getInstance().isRequireProperTool()) return;
         if (player.getGameMode().equals(GameMode.CREATIVE) && !ConfigHandler.getInstance().isWorksInCreative()) return;
         if (ConfigHandler.getInstance().isRequireLore() && !hasRequiredLore(heldItem)) return;
         if (player.isSneaking()) return;
-        int maxSearch = checkItemDurability(heldItem);
-        if (maxSearch < 5) {
-            player.sendRichMessage(LocaleHandler.getInstance().getAlmostBroken());
-            return;
-        }
         Set<Material> blocksToCheck = new HashSet<>();
         if (!ConfigHandler.getInstance().isOnlySameType()) {
             blocksToCheck.addAll(blockSet);
         } else {
             blocksToCheck.addAll(findGroup(blockMaterial));
         }
-        Set<Location> blocksToBreak = CheckBlock.getInstance().getBlockList(blocksToCheck, blockLocation, maxSearch);
-        breakBlocks(blocksToBreak, player);
+        Bukkit.getScheduler().runTaskAsynchronously(
+                SimpleVeinMining.getInstance(),
+                () -> {
+                    Set<Location> blocksToBreak = CheckBlock.getBlockList(player, blocksToCheck, blockLocation, ConfigHandler.getInstance().getMaxBlocksToBreak());
+                    veinMinedBlocks.addAll(blocksToBreak);
+                    Bukkit.getScheduler().runTask(
+                            SimpleVeinMining.getInstance(),
+                            () -> breakBlocks(blocksToBreak,player)
+                    );
+                }
+        );
     }
 
+    /**
+     * Match the blocks that are considered a "group".<br/>
+     * ie: Coal Group -&gt COAL_ORE, DEEPSLATE_COAL_ORE
+     * @param materialOfBrokenBlock Type of block to find group for
+     * @return The group of materials that the input material belongs to
+     */
     private Set<Material> findGroup(Material materialOfBrokenBlock) {
         HashMap<String, Set<Material>> groupList = ConfigHandler.getInstance().getGroupList();
         String key = null;
@@ -98,50 +109,27 @@ public class MiningListener implements Listener {
     }
 
     private void breakBlocks(Set<Location> locations, Player player) {
-        ItemStack itemToUse = player.getInventory().getItemInMainHand();
-        int damageAmount = 0;
-        boolean claimedBlocksInList = false;
-        int unbreakingEnchantLevel = itemToUse.getEnchantmentLevel(Enchantment.UNBREAKING);
+        boolean minimumDurabilityReached = false;
         for (Location location : locations) {
-            if (SimpleVeinMining.getInstance().hasYardWatchProvider() && !YardWatchHook.canBreakBlock(player, location.getBlock())) {
-                claimedBlocksInList = true;
-                continue;
+            if (CoreProtectHook.getInstance().getCoreProtect() != null) LogBrokenBlocks.logBrokenBlock(player, location);
+
+            if (ConfigHandler.getInstance().isPreventBreakingTool() && getRemainingDurability(player.getInventory().getItemInMainHand()) <= 5) {
+                veinMinedBlocks.remove(location);
+                minimumDurabilityReached = true;
             }
-            if (CoreProtectHook.getInstance().getCoreProtect() != null)
-                LogBrokenBlocks.logBrokenBlock(player, location);
-            location.getBlock().breakNaturally(itemToUse, ConfigHandler.getInstance().isRunEffects(), ConfigHandler.getInstance().isDropXP());
-            if (ConfigHandler.getInstance().isDamageTool()) {
-                damageAmount = damageAmount + 1;
-            }
+            else player.breakBlock(location.getBlock());
         }
-        if (ConfigHandler.getInstance().isRespectUnbreakingEnchant()) {
-            damageAmount = calculateDamageWithUnbreaking(damageAmount, unbreakingEnchantLevel);
+        if (minimumDurabilityReached) {
+            player.sendRichMessage(LocaleHandler.getInstance().getAlmostBroken());
         }
-        player.getInventory().getItemInMainHand().damage(damageAmount, player);
-        if (claimedBlocksInList) player.sendRichMessage(LocaleHandler.getInstance().getClaimedBlocks());
     }
 
-    private int checkItemDurability(ItemStack heldItem) {
-        int maxSearch;
-        int maxConfiguredSearch = ConfigHandler.getInstance().getMaxBlocksToBreak();
-        if (!(ConfigHandler.getInstance().isDamageTool() &&
-              ConfigHandler.getInstance().isPreventBreakingTool() &&
-              (heldItem.getItemMeta() instanceof Damageable damageableItem))) {
-            return maxConfiguredSearch;
-        }
-        if (!damageableItem.hasMaxDamage()) return maxConfiguredSearch;
-        int maxDurability = damageableItem.getMaxDamage();
-        int currentDamage = damageableItem.getDamage();
-        maxSearch = maxDurability - currentDamage - 5;
-        return Math.min(maxSearch, maxConfiguredSearch);
-    }
+    private int getRemainingDurability(ItemStack heldItem) {
+        Integer damage = heldItem.getData(DataComponentTypes.DAMAGE);
+        Integer maxDamage = heldItem.getData(DataComponentTypes.MAX_DAMAGE);
+        if (damage == null || maxDamage == null) return Integer.MIN_VALUE;
 
-    private int calculateDamageWithUnbreaking(int damageAmount, int unbreakingAmount) {
-        double unbreakingDamageReduction = 0.2;
-        for (int i = 0; i < unbreakingAmount; i++) {
-            damageAmount = (int) (damageAmount * (1 - unbreakingDamageReduction));
-        }
-        return damageAmount;
+        return maxDamage - damage;
     }
 
     private boolean hasRequiredLore(ItemStack item) {
