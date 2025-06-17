@@ -72,4 +72,5 @@ require-item-model:
 max-blocks-to-break: 64
 ignore-protections: false
 crouch-prevents-vein-mining: false
+drop-at-mined-location: false
 

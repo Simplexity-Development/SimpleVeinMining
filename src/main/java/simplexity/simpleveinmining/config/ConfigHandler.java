@@ -32,7 +32,8 @@ public class ConfigHandler {
     private int maxBlocksToBreak;
     private final Logger logger = SimpleVeinMining.getInstance().getLogger();
     private boolean isBlacklist, onlySameType, worksInCreative, runEffects, dropXP, damageTool, preventBreakingTool,
-            respectUnbreakingEnchant, requireProperTool, ignoreProtections, requireLore, requireItemModel, crouchPreventsVeinMining;
+            respectUnbreakingEnchant, requireProperTool, ignoreProtections, requireLore, requireItemModel,
+            crouchPreventsVeinMining, dropAtMinedLocation;
     private String loreString;
     
     public void loadConfigValues() {
@@ -62,6 +63,7 @@ public class ConfigHandler {
         requireProperTool = config.getBoolean("require-proper-tool", true);
         maxBlocksToBreak = config.getInt("max-blocks-to-break", 64);
         ignoreProtections = config.getBoolean("ignore-protections", false);
+        dropAtMinedLocation = config.getBoolean("drop-at-mined-location", false);
         requireLore = config.getBoolean("require-lore.enabled", false);
         loreString = config.getString("require-lore.lore", "<white>Vein Mining</white>");
         requireItemModel = config.getBoolean("require-item-model.enabled", false);
@@ -199,4 +201,6 @@ public class ConfigHandler {
     public boolean doesCrouchPreventVeinMining(){
         return crouchPreventsVeinMining;
     }
+
+    public boolean isDropAtMinedLocation() { return dropAtMinedLocation; }
 }

@@ -9,6 +9,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,29 +25,24 @@ import simplexity.simpleveinmining.config.LocaleHandler;
 import simplexity.simpleveinmining.hooks.coreprotect.CoreProtectHook;
 import simplexity.simpleveinmining.hooks.coreprotect.LogBrokenBlocks;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 @SuppressWarnings("UnstableApiUsage")
 public class MiningListener implements Listener {
 
-    Set<Location> veinMinedBlocks = ConcurrentHashMap.newKeySet();
+    // Block Breaking -> First Block Broken in the Vein
+    ConcurrentHashMap<Location,Location> veinMinedBlocks = new ConcurrentHashMap<>();
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-
     public void onBlockBreak(BlockBreakEvent blockBreakEvent) {
         Block blockBroken = blockBreakEvent.getBlock();
         Material blockMaterial = blockBroken.getType();
         Location blockLocation = blockBroken.getLocation().toBlockLocation();
 
-        if (veinMinedBlocks.contains(blockLocation)) {
-            veinMinedBlocks.remove(blockLocation);
-            return;
-        }
+        // Do not handle on this EventHandler
+        if (veinMinedBlocks.containsKey(blockLocation)) return;
 
         Player player = blockBreakEvent.getPlayer();
 
@@ -75,13 +71,39 @@ public class MiningListener implements Listener {
                 SimpleVeinMining.getInstance(),
                 () -> {
                     Set<Location> blocksToBreak = CheckBlock.getBlockList(player, blocksToCheck, blockLocation, ConfigHandler.getInstance().getMaxBlocksToBreak());
-                    veinMinedBlocks.addAll(blocksToBreak);
+                    blocksToBreak.forEach(location -> veinMinedBlocks.put(location, blockLocation));
                     Bukkit.getScheduler().runTask(
                             SimpleVeinMining.getInstance(),
                             () -> breakBlocks(blocksToBreak,player)
                     );
                 }
         );
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockBreakDropRedirect(BlockBreakEvent event) {
+        Location broken = event.getBlock().getLocation();
+        Location redirectTo = veinMinedBlocks.remove(broken);
+        if (event.isCancelled()) return;
+        if (redirectTo == null) return;
+        if (!ConfigHandler.getInstance().isDropAtMinedLocation()) return;
+
+        event.setDropItems(false);
+        int xp = event.getExpToDrop();
+        event.setExpToDrop(0);
+
+        Player player = event.getPlayer();
+        ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+
+        Collection<ItemStack> drops = event.getBlock().getDrops(itemInMainHand, player);
+
+        redirectTo = redirectTo.clone().add(0.5, 0.5, 0.5);
+        for (ItemStack item : drops) {
+            event.getBlock().getWorld().dropItemNaturally(redirectTo, item);
+        }
+        if (xp == 0) return;
+        ExperienceOrb orb = redirectTo.getWorld().spawn(redirectTo, ExperienceOrb.class);
+        orb.setExperience(xp);
     }
 
     /**
