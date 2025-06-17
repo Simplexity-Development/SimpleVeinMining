@@ -1,18 +1,19 @@
 package simplexity.simpleveinmining;
 
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import me.youhavetrouble.yardwatch.Protection;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.plugin.java.JavaPlugin;
 import simplexity.simpleveinmining.commands.ReloadCommand;
 import simplexity.simpleveinmining.commands.VeinMiningToggle;
 import simplexity.simpleveinmining.config.ConfigHandler;
+import simplexity.simpleveinmining.config.Constants;
 import simplexity.simpleveinmining.config.LocaleHandler;
 import simplexity.simpleveinmining.hooks.worldguard.WorldGuardHook;
 import simplexity.simpleveinmining.listeners.MiningListener;
 import simplexity.simpleveinmining.listeners.YellAtServerOwnerListener;
 
-import java.util.Objects;
-
+@SuppressWarnings("UnstableApiUsage")
 public final class SimpleVeinMining extends JavaPlugin {
 
     private static SimpleVeinMining instance;
@@ -32,6 +33,7 @@ public final class SimpleVeinMining extends JavaPlugin {
         if (isWorldGuardEnabled) WorldGuardHook.getInstance().registerWorldGuardFlag(getSLF4JLogger());
         registerListeners();
         registerCommands();
+        registerPermissions();
     }
 
     private void registerListeners() {
@@ -40,8 +42,16 @@ public final class SimpleVeinMining extends JavaPlugin {
     }
 
     private void registerCommands() {
-        Objects.requireNonNull(this.getCommand("vmreload")).setExecutor(new ReloadCommand());
-        Objects.requireNonNull(this.getCommand("vmtoggle")).setExecutor(new VeinMiningToggle());
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
+            commands.registrar().register(ReloadCommand.createCommand());
+            commands.registrar().register(VeinMiningToggle.createCommand());
+        });
+    }
+
+    private void registerPermissions() {
+        getServer().getPluginManager().addPermission(Constants.MINING_PERMISSION);
+        getServer().getPluginManager().addPermission(Constants.TOGGLE_PERMISSION);
+        getServer().getPluginManager().addPermission(Constants.RELOAD_PERMISSION);
     }
 
     public static SimpleVeinMining getInstance() {

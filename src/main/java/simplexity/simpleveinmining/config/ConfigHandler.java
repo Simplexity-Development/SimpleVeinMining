@@ -15,27 +15,27 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 public class ConfigHandler {
-    
+
     private ConfigHandler() {
     }
-    
+
     private static ConfigHandler instance;
-    
+
     public static ConfigHandler getInstance() {
         if (instance == null) instance = new ConfigHandler();
         return instance;
     }
-    
+
     private final Set<Material> blockList = new HashSet<>();
     private final HashSet<Key> itemModels = new HashSet<>();
     private final HashMap<String, Set<Material>> groupList = new HashMap<>();
     private int maxBlocksToBreak;
     private final Logger logger = SimpleVeinMining.getInstance().getLogger();
-    private boolean isBlacklist, onlySameType, worksInCreative, runEffects, dropXP, damageTool, preventBreakingTool,
-            respectUnbreakingEnchant, requireProperTool, ignoreProtections, requireLore, requireItemModel,
+    private boolean isBlacklist, onlySameType, worksInCreative, preventBreakingTool,
+            requireProperTool, ignoreProtections, requireLore, requireItemModel,
             crouchPreventsVeinMining, dropAtMinedLocation;
     private String loreString;
-    
+
     public void loadConfigValues() {
         SimpleVeinMining.getInstance().reloadConfig();
         FileConfiguration config = SimpleVeinMining.getInstance().getConfig();
@@ -55,11 +55,7 @@ public class ConfigHandler {
             }
         }
         worksInCreative = config.getBoolean("works-in-creative", false);
-        runEffects = config.getBoolean("run-effects", false);
-        dropXP = config.getBoolean("drop-xp", true);
-        damageTool = config.getBoolean("damage-tool.enabled", true);
         preventBreakingTool = config.getBoolean("damage-tool.prevent-breaking", true);
-        respectUnbreakingEnchant = config.getBoolean("damage-tool.respect-unbreaking-enchant", true);
         requireProperTool = config.getBoolean("require-proper-tool", true);
         maxBlocksToBreak = config.getInt("max-blocks-to-break", 64);
         ignoreProtections = config.getBoolean("ignore-protections", false);
@@ -70,14 +66,14 @@ public class ConfigHandler {
         if (requireItemModel) {
             verifyItemModels(config);
         }
-        crouchPreventsVeinMining = config.getBoolean("crouch-prevents-vein-mining", false);
+        crouchPreventsVeinMining = config.getBoolean("crouch-prevents-vein-mining", true);
     }
-    
+
     private ArrayList<Material> loadConfiguredMaterials(FileConfiguration config) {
         List<String> materialStrings = config.getStringList("allowed-blocks");
         return checkMaterials(materialStrings, "allowed-blocks");
     }
-    
+
     private HashMap<String, Set<Material>> loadConfiguredGroups(FileConfiguration config) {
         ConfigurationSection veinTypes = config.getConfigurationSection("types");
         HashMap<String, Set<Material>> configuredGroups = new HashMap<>();
@@ -99,9 +95,9 @@ public class ConfigHandler {
             logger.warning("No block types were configured. The plugin will not use group functionality until this is resolved.");
         }
         return configuredGroups;
-        
+
     }
-    
+
     private ArrayList<Material> checkMaterials(List<String> materialStrings, String configSectionForError) {
         ArrayList<Material> configuredMaterials = new ArrayList<>();
         for (String string : materialStrings) {
@@ -129,7 +125,7 @@ public class ConfigHandler {
             itemModels.add(key);
         }
     }
-    
+
     public Set<Material> getBlockList() {
         return blockList;
     }
@@ -137,49 +133,33 @@ public class ConfigHandler {
     public Set<Key> getRequiredItemModels(){
         return itemModels;
     }
-    
+
     public boolean isBlacklist() {
         return isBlacklist;
     }
-    
+
     public boolean isOnlySameType() {
         return onlySameType;
     }
-    
+
     public HashMap<String, Set<Material>> getGroupList() {
         return groupList;
     }
-    
-    public boolean isDropXP() {
-        return dropXP;
-    }
-    
-    public boolean isDamageTool() {
-        return damageTool;
-    }
-    
+
     public boolean isPreventBreakingTool() {
         return preventBreakingTool;
     }
-    
+
     public boolean isRequireProperTool() {
         return requireProperTool;
     }
-    
+
     public int getMaxBlocksToBreak() {
         return maxBlocksToBreak;
     }
-    
-    public boolean isRunEffects() {
-        return runEffects;
-    }
-    
+
     public boolean isWorksInCreative() {
         return worksInCreative;
-    }
-    
-    public boolean isRespectUnbreakingEnchant() {
-        return respectUnbreakingEnchant;
     }
 
     public boolean isIgnoreProtections() {

@@ -1,19 +1,26 @@
 package simplexity.simpleveinmining.commands;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
 import simplexity.simpleveinmining.config.ConfigHandler;
+import simplexity.simpleveinmining.config.Constants;
 import simplexity.simpleveinmining.config.LocaleHandler;
 
-public class ReloadCommand implements CommandExecutor {
-    
-    @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        ConfigHandler.getInstance().loadConfigValues();
-        LocaleHandler.getInstance().loadLocale();
-        commandSender.sendRichMessage(LocaleHandler.getInstance().getConfigReloaded());
-        return false;
+@SuppressWarnings("UnstableApiUsage")
+public class ReloadCommand {
+
+    public static LiteralCommandNode<CommandSourceStack> createCommand() {
+        return Commands.literal("vmreload")
+                .requires(css -> css.getSender().hasPermission(Constants.RELOAD_PERMISSION))
+                .executes(ctx -> {
+                    CommandSender sender = ctx.getSource().getSender();
+                    ConfigHandler.getInstance().loadConfigValues();
+                    LocaleHandler.getInstance().loadLocale();
+                    sender.sendRichMessage(LocaleHandler.getInstance().getConfigReloaded());
+                    return Command.SINGLE_SUCCESS;
+                }).build();
     }
 }

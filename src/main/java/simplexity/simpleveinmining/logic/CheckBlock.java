@@ -1,9 +1,10 @@
-package simplexity.simpleveinmining;
+package simplexity.simpleveinmining.logic;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import simplexity.simpleveinmining.SimpleVeinMining;
 import simplexity.simpleveinmining.hooks.worldguard.WorldGuardHook;
 import simplexity.simpleveinmining.hooks.yardwatch.YardWatchHook;
 

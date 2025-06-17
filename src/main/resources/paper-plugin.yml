@@ -1,0 +1,15 @@
+name: SimpleVeinMining
+version: '${project.version}'
+main: simplexity.simpleveinmining.SimpleVeinMining
+author: RhythmicSystem
+api-version: '1.21'
+dependencies:
+  server:
+    CoreProtect:
+      load: BEFORE
+      required: false
+    WorldGuard:
+      load: BEFORE
+      required: false
+description: A simple plugin with configuration options for vein mining.
+website: https://github.com/Simplexity-Development/SimpleVeinMining

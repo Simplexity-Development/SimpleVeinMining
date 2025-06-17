@@ -16,7 +16,7 @@ public class LocaleHandler {
     private final File localeFile = new File(SimpleVeinMining.getInstance().getDataFolder(), fileName);
     private final FileConfiguration localeConfig = new YamlConfiguration();
     private final Logger logger = SimpleVeinMining.getInstance().getLogger();
-    private String almostBroken, onlyPlayer, toggleEnabled, toggleDisabled, configReloaded, claimedBlocks,
+    private String almostBroken, toggleEnabled, toggleDisabled, configReloaded,
             worldguardRegionDisabled, issueWithProtectionCheck;
 
     private LocaleHandler() {
@@ -42,17 +42,11 @@ public class LocaleHandler {
             e.printStackTrace();
         }
         almostBroken = localeConfig.getString("errors.not-enough-durability", "<dark_red>[<gold>!!</gold>]</dark_red> <yellow>Your tool is nearly broken, vein mining has been prevented.</yellow>");
-        onlyPlayer = localeConfig.getString("errors.only-player", "<red>Only a player can run this command</red>");
         toggleEnabled = localeConfig.getString("messages.toggle.enabled", "<green>Vein mining has been enabled</green>");
         toggleDisabled = localeConfig.getString("messages.toggle.disabled", "<gray>Vein mining is now disabled</gray>");
         configReloaded = localeConfig.getString("messages.config-reloaded", "<gold>Simple Vein Mining Config has been reloaded</gold>");
-        claimedBlocks = localeConfig.getString("errors.claimed-blocks", "<red>Some blocks you tried to break were inside a claim you do not have access to.</red>");
         worldguardRegionDisabled = localeConfig.getString("errors.world-guard-region-disabled", "<red>Vein mining is disabled in this region!</red>");
         issueWithProtectionCheck = localeConfig.getString("errors.issue-with-protection-check", "<red>An issue occurred trying to check if you have the ability to break blocks here. Please tell an administrator if this continues to occur</red>");
-    }
-
-    public String getOnlyPlayer() {
-        return onlyPlayer;
     }
 
     public String getAlmostBroken() {
@@ -69,10 +63,6 @@ public class LocaleHandler {
 
     public String getConfigReloaded() {
         return configReloaded;
-    }
-
-    public String getClaimedBlocks() {
-        return claimedBlocks;
     }
 
     public String getWorldguardRegionDisabled() {

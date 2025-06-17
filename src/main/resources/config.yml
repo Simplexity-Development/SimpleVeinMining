@@ -55,12 +55,8 @@ types:
     - "minecraft:redstone_ore"
     - "minecraft:deepslate_redstone_ore"
 works-in-creative: false
-run-effects: true
-drop-xp: true
 damage-tool:
-  enabled: true
   prevent-breaking: true
-  respect-unbreaking-enchant: true
 require-proper-tool: true
 require-lore:
   enabled: false
@@ -71,6 +67,5 @@ require-item-model:
     - "minecraft:stick"
 max-blocks-to-break: 64
 ignore-protections: false
-crouch-prevents-vein-mining: false
+crouch-prevents-vein-mining: true
 drop-at-mined-location: false
-
