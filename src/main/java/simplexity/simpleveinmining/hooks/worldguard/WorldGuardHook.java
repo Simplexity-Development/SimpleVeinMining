@@ -12,6 +12,7 @@ import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import simplexity.simpleveinmining.SimpleVeinMining;
 import simplexity.simpleveinmining.config.LocaleHandler;
@@ -49,7 +50,7 @@ public class WorldGuardHook {
         }
     }
 
-    public boolean canBreakBlockInRegion(Player player, Location blockLocation) {
+    public boolean canBreakBlockInRegion(@NotNull Player player, @NotNull Location blockLocation) {
         try {
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             World world = BukkitAdapter.adapt(blockLocation.getWorld());

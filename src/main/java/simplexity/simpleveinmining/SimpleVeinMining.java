@@ -23,7 +23,7 @@ public final class SimpleVeinMining extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        isWorldGuardEnabled = hasWorldGuard();
+        setWorldGuardEnabled(hasWorldGuard());
         if (isWorldGuardEnabled) WorldGuardHook.getInstance().registerWorldGuardFlag(getSLF4JLogger());
     }
 
