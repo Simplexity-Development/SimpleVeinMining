@@ -22,6 +22,12 @@ public final class SimpleVeinMining extends JavaPlugin {
     private boolean isWorldGuardEnabled;
 
     @Override
+    public void onLoad() {
+        setWorldGuardEnabled(hasWorldGuard());
+        if (isWorldGuardEnabled) WorldGuardHook.getInstance().registerWorldGuardFlag(getSLF4JLogger());
+    }
+
+    @Override
     public void onEnable() {
         instance = this;
         this.saveDefaultConfig();
@@ -29,8 +35,6 @@ public final class SimpleVeinMining extends JavaPlugin {
         saveConfig();
         ConfigHandler.getInstance().loadConfigValues();
         LocaleHandler.getInstance().loadLocale();
-        isWorldGuardEnabled = hasWorldGuard();
-        if (isWorldGuardEnabled) WorldGuardHook.getInstance().registerWorldGuardFlag(getSLF4JLogger());
         registerListeners();
         registerCommands();
         registerPermissions();
